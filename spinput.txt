@@ -1,0 +1,104 @@
+
+33		//nombre de locus
+2		// number of pops
+48		//nombre d'individu espèce 1 pour locus 1-2.fas
+44		//nombre d'individu espèce 2 pour locus 1-2.fas
+230		//longueur du locus 1-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 2-2.fas
+44		//nombre d'individu espèce 2 pour locus 2-2.fas
+751		//longueur du locus 2-2.fas en paires de bases
+60 
+43		//nombre d'individu espèce 2 pour locus 3-2.fas
+275		//longueur du locus 3-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 4-2.fas
+44		//nombre d'individu espèce 2 pour locus 4-2.fas
+344		//longueur du locus 4-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 5-2.fas
+44		//nombre d'individu espèce 2 pour locus 5-2.fas
+452		//longueur du locus 5-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 6-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 6-2.muscle.fas
+180		//longueur du locus 6-2.muscle.fas en paires de bases
+47		//nombre d'individu espèce 1 pour locus 7-2.fas
+43		//nombre d'individu espèce 2 pour locus 7-2.fas
+69		//longueur du locus 7-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 8-2.fas
+44		//nombre d'individu espèce 2 pour locus 8-2.fas
+384		//longueur du locus 8-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 9-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 9-2.muscle.fas
+255		//longueur du locus 9-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 10-2.fas
+44		//nombre d'individu espèce 2 pour locus 10-2.fas
+242		//longueur du locus 10-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 11-2.fas
+44		//nombre d'individu espèce 2 pour locus 11-2.fas
+174		//longueur du locus 11-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 12-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 12-2.muscle.fas
+439		//longueur du locus 12-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 13-2.fas
+44		//nombre d'individu espèce 2 pour locus 13-2.fas
+130		//longueur du locus 13-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 14-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 14-2.muscle.fas
+103		//longueur du locus 14-2.muscle.fas en paires de bases
+59		//nombre d'individu espèce 1 pour locus 15-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 15-2.muscle.fas
+175		//longueur du locus 15-2.muscle.fas en paires de bases
+48		//nombre d'individu espèce 1 pour locus 16-2.muscle.fas
+40		//nombre d'individu espèce 2 pour locus 16-2.muscle.fas
+201		//longueur du locus 16-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 17-2.fas
+44		//nombre d'individu espèce 2 pour locus 17-2.fas
+362		//longueur du locus 17-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 18-2.fas
+44		//nombre d'individu espèce 2 pour locus 18-2.fas
+504		//longueur du locus 18-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 19-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 19-2.muscle.fas
+408		//longueur du locus 19-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 20-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 20-2.muscle.fas
+229		//longueur du locus 20-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 21-2.fas
+44		//nombre d'individu espèce 2 pour locus 21-2.fas
+346		//longueur du locus 21-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 22-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 22-2.muscle.fas
+551		//longueur du locus 22-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 23-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 23-2.muscle.fas
+141		//longueur du locus 23-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 24-2.fas
+44		//nombre d'individu espèce 2 pour locus 24-2.fas
+282		//longueur du locus 24-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 25-2.fas
+44		//nombre d'individu espèce 2 pour locus 25-2.fas
+317		//longueur du locus 25-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 26-2.fas
+43		//nombre d'individu espèce 2 pour locus 26-2.fas
+298		//longueur du locus 26-2.fas en paires de bases
+57		//nombre d'individu espèce 1 pour locus 27-2.fas
+41		//nombre d'individu espèce 2 pour locus 27-2.fas
+211		//longueur du locus 27-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 28-2.fas
+44		//nombre d'individu espèce 2 pour locus 28-2.fas
+259		//longueur du locus 28-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 29-2.fas
+44		//nombre d'individu espèce 2 pour locus 29-2.fas
+186		//longueur du locus 29-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 30-2.fas
+44		//nombre d'individu espèce 2 pour locus 30-2.fas
+300		//longueur du locus 30-2.fas en paires de bases
+48		//nombre d'individu espèce 1 pour locus 31-2.fas
+40		//nombre d'individu espèce 2 pour locus 31-2.fas
+205		//longueur du locus 31-2.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 32-2.muscle.fas
+44		//nombre d'individu espèce 2 pour locus 32-2.muscle.fas
+304		//longueur du locus 32-2.muscle.fas en paires de bases
+60		//nombre d'individu espèce 1 pour locus 33-2.fas
+44		//nombre d'individu espèce 2 pour locus 33-2.fas
+925		//longueur du locus 33-2.fas en paires de bases
+1		//*nombre de datasets simulés*/
+ms-like_DAta_33loc.Pines.out		//*nom de l'output de MS*/

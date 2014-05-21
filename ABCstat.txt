@@ -1,0 +1,4 @@
+
+dataset	sumpairdif_0_mean	sumpairdif_0_std	theta_0_mean	theta_0_std	D_0_mean	D_0_std	pi_0_mean	pi_0_std	sumpairdif_1_mean	sumpairdif_1_std	theta_1_mean	theta_1_std	D_1_mean	D_1_std	pi_1_mean	pi_1_std	d_0x1_mean	d_0x1_std	dn_0x1_mean	dn_0x1_std	FST_0x1_mean	FST_0x1_std	bialsites_0x1_mean	bialsites_0x1_std	multisites_0x1_mean	multisites_0x1_std	sfA_0x1_mean	sfA_0x1_std	sfB_0x1_mean	sfB_0x1_std	sfout_0x1_mean	sfout_0x1_std	sxA_0x1_mean	sxA_0x1_std	sxB_0x1_mean	sxB_0x1_std	sxAfB_0x1_mean	sxAfB_0x1_std	sxBfA_0x1_mean	sxBfA_0x1_std	ss_0x1_mean	ss_0x1_std	Wald_0x1_mean	Wald_0x1_std
+
+0	7.78999	7.10633	0.00524017	0.00390001	-0.290838	1.10612	0.00468995	0.00435289	7.30891	4.75275	0.0080816	0.00504346	0.0197703	0.780374	0.00779805	0.00502566	0.0115787	0.00767452	0.00533471	0.00574268	0.249626	0.201508	13.5152	13.177	0	0	0.0606061	0.348155	0.030303	0.174078	0	0	1.93939	2.59735	5.15152	5.21489	0.181818	0.46466	0.454545	1.03353	5.69697	8.34598	-9	0
