@@ -17,8 +17,8 @@ struct biallelic_sites
 	char b2;
 	};
 
-Harmonic harmonic();
-Harmonic_2 harmonic_2();
+Harmonic harmonic;
+Harmonic_2 harmonic_2;
 	
 
 /** Checks whether number of alleles at @site is > 2. */
@@ -57,7 +57,7 @@ bool check_multi(const Sample & sequences,
 
 int count_singletons(const Sample & sequences, const size_t polym_sites)
 	{
-	bialellic_sites bs;
+	biallelic_sites bs;
 	int count = 0;
 
 	for (size_t site=0; site<polym_sites; site++)
@@ -128,7 +128,7 @@ float DTajima(int n_sequences, int n_segsites, float avgpairdif)
 	const float e1 = c1 / a1;
 	const float e2 = c2 / (a1*a1+a2);
 
-	const double Dtemp = nsegsites == 0 ? 
+	const double Dtemp = n_segsites == 0 ? 
 		0.0F : /*Warning put a value of 0 if no segregating sites!!!!!!*/
 		(double) (avgpairdif-((double) n_segsites/(double)a1))
 			/ sqrt(e1*n_segsites+e2*n_segsites*(n_segsites-1)); 
@@ -230,7 +230,7 @@ double fu_li_Fstar(int n_sequences, int n_singletons, int n_mutations,
 	const double FStar = 
 		(pi - double(n_sequences - 1)/n_sequences*n_singletons)
 		/
-		sqrt(uF*NumMut + vF*n_mutations*n_mutations);
+		sqrt(uF*n_mutations+ vF*n_mutations*n_mutations);
 	return FStar;
 	}
 

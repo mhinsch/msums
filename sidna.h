@@ -5,81 +5,21 @@
 #include <vector>
 #include <string>
 
+
+#include "util.h"
+
 using namespace std;
 
 
 typedef string Sequence;
 typedef vector<string> Sample;
 
-template<class T, class U>
-class Harmonic_Rec
-	{
-public:
-	typedef T data_t;
-	
-	T operator()()
-		{
-		return T(0);
-		}
-
-	T operator()(T last, U curr)
-		{
-		return last + T(1)/T(curr);
-		}
-	};
-
-template<class T, class U>
-class Harmonic_2_Rec
-	{
-	typedef T data_t;
-	
-	T operator()()
-		{
-		return T(0);
-		}
-
-	T operator()(T last, U curr)
-		{
-		return last + T(1)/T(curr*curr);
-		}
-	};
-
-template<class OP>
-class RecursiveSeries
-	{
-public:
-	typedef typename OP::data_t data_t;
-	
-protected:
-	vector<data_t> _data;
-	OP _op;
-
-public:
-	RecursiveSum()
-		: _data(1)
-		{
-		_data[0] = _op;
-		}
-	
-	data_t operator()(int n)
-		{
-		for (size_t i=_data.size(); i<=n; i++)
-			_data.push_back(_op(_data.back(), i));
-		
-		return _data[n];
-		}
-	};
 
 typedef RecursiveSeries<Harmonic_Rec<float, int> > Harmonic;
 typedef RecursiveSeries<Harmonic_2_Rec<float, int> > Harmonic_2;
 	
 extern Harmonic harmonic;
 extern Harmonic_2 harmonic_2;
-
-inline double undefined()
-	{
-	return numeric_limits<double>::quiet_NaN();
-	}
 
 template<typename T>
 class Stats
@@ -162,8 +102,8 @@ enum SStatsI {
 	_theta,
 	_D,
 	_pi,
-	_dStar,
-	_fStar,
+	_Dstar,
+	_Fstar,
 	_sstats_last};
 
 enum PStatsI {
