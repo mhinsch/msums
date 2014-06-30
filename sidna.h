@@ -15,8 +15,8 @@ typedef string Sequence;
 typedef vector<string> Sample;
 
 
-typedef RecursiveSeries<Harmonic_Rec<float, int> > Harmonic;
-typedef RecursiveSeries<Harmonic_2_Rec<float, int> > Harmonic_2;
+typedef RecursiveSeries<Harmonic_Rec<double, int> > Harmonic;
+typedef RecursiveSeries<Harmonic_2_Rec<double, int> > Harmonic_2;
 	
 extern Harmonic harmonic;
 extern Harmonic_2 harmonic_2;
@@ -213,6 +213,6 @@ public:
 
 	};
 
-float pearson_corr_pi(const SingleStats & statsA, const SingleStats & statsB);
+double pearson_corr_pi(const SingleStats & statsA, const SingleStats & statsB);
 
 #endif	// SIDNA_H

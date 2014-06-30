@@ -19,7 +19,7 @@ using namespace std;
 
 /*************************************************************************/
 
-inline double pow_2(float x)
+inline double pow_2(double x)
 	{
 	return (double) x*(double)x;
 	}

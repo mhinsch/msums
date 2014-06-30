@@ -64,8 +64,8 @@ public:
 		}
 	};
 
-typedef RecursiveSeries<Harmonic_Rec<float, int> > Harmonic;
-typedef RecursiveSeries<Harmonic_2_Rec<float, int> > Harmonic_2;
+typedef RecursiveSeries<Harmonic_Rec<double, int> > Harmonic;
+typedef RecursiveSeries<Harmonic_2_Rec<double, int> > Harmonic_2;
 
 inline double undefined()
 	{

@@ -116,24 +116,24 @@ typedef vector<char> wald_type;
 double WaldWolfowitz(const wald_type & IOseq, int stats);
 
 
-float DTajima(int n_sequences, int n_segsites, float avgpairdif)
+double DTajima(int n_sequences, int n_segsites, double avgpairdif)
 	{
-	const float a1 = harmonic(n_sequences-1);
-	const float a2 = harmonic_2(n_sequences-1);
-	const float b1 = (n_sequences+1.0) / 3.0 / (n_sequences-1.0);
-	const float b2 = 2.0 * (n_sequences*n_sequences+n_sequences+3.0) / 
+	const double a1 = harmonic(n_sequences-1);
+	const double a2 = harmonic_2(n_sequences-1);
+	const double b1 = (n_sequences+1.0) / 3.0 / (n_sequences-1.0);
+	const double b2 = 2.0 * (n_sequences*n_sequences+n_sequences+3.0) / 
 		9.0 / n_sequences / (n_sequences-1.0);
-	const float c1 = b1 - (1.0/a1);
-	const float c2 = b2 - ((n_sequences+2.0)/a1/n_sequences) + (a2/a1/a1);
-	const float e1 = c1 / a1;
-	const float e2 = c2 / (a1*a1+a2);
+	const double c1 = b1 - (1.0/a1);
+	const double c2 = b2 - ((n_sequences+2.0)/a1/n_sequences) + (a2/a1/a1);
+	const double e1 = c1 / a1;
+	const double e2 = c2 / (a1*a1+a2);
 
 	const double Dtemp = n_segsites == 0 ? 
 		0.0F : /*Warning put a value of 0 if no segregating sites!!!!!!*/
 		(double) (avgpairdif-((double) n_segsites/(double)a1))
 			/ sqrt(e1*n_segsites+e2*n_segsites*(n_segsites-1)); 
 	
-	return (float) Dtemp;
+	return (double) Dtemp;
 	}	/*end of procedure DTajima*/        
 
 
@@ -144,14 +144,14 @@ void SingleStats::compute_pi_theta(const size_t locus,
 	const int n_sites = sample[0].size();
 
 	/*compute pi for species A */
-	const float sum_pair_dif = pair_dif(sample, n_polym_sites) / float(n_sites);
+	const double sum_pair_dif = pair_dif(sample, n_polym_sites) / double(n_sites);
 	const int count_pair = n_sequences * (n_sequences - 1) / 2;
 	set(_sumpairdif, locus, sum_pair_dif);
 	set(_pi, locus, sum_pair_dif / count_pair);
 	
 	// theta
 	const int count_segr = segr(sample, n_polym_sites);
-	set(_theta, locus, count_segr / harmonic(n_sequences-1) / float(n_sites));
+	set(_theta, locus, count_segr / harmonic(n_sequences-1) / double(n_sites));
 	set(_D, locus, DTajima(n_sequences, count_segr, get(_pi, locus)*n_sites));	/*Warning Pi is multiplied by number of sites*/
 	}
 
@@ -259,18 +259,18 @@ void PairStats::compute_div_fst(const size_t locus,
 
 	/*now computes average pairwise divergence between species A and B*/
 	const int count_pairAB = nseqA * nseqB;
-	const float pair_div = avg_pair_div(seqAlhs, seqBlhs, nspolyl) / float(nSites);
+	const double pair_div = avg_pair_div(seqAlhs, seqBlhs, nspolyl) / double(nSites);
 
-	set(_d, locus, pair_div / float(count_pairAB));
+	set(_d, locus, pair_div / double(count_pairAB));
 	set(_dn, locus, 
 		get(_d, locus) - (statsA.get(_pi, locus) + statsB.get(_pi, locus))/2.0);
 
 	const int count_pair_piT = 
 		nseqA * (nseqA - 1) / 2 + nseqB * (nseqB - 1) / 2 + count_pairAB;
 	
-	const float piT = 
+	const double piT = 
 		(statsA.get(_sumpairdif, locus) + statsB.get(_sumpairdif, locus) + 
-		pair_div) / (float) count_pair_piT;
+		pair_div) / (double) count_pair_piT;
 
 	if (piT >= 1.0e-7) 
 		set(_FST, locus, 
@@ -420,7 +420,7 @@ void PairStats::compute_polyl(const size_t locus,
 		set(_sxBfA, locus, count_sxBfA);
 		}
 	set(_ss, locus, count_ss);
-	set(_Wald, locus, (float) WaldWolfowitz(Walds, 0));
+	set(_Wald, locus, (double) WaldWolfowitz(Walds, 0));
 	}	/*end of compute_polyl*/
 
 /**********************************************************************************/
@@ -472,12 +472,12 @@ double WaldWolfowitz(const wald_type & IOseq, int stats)
 
 
 
-float pearson_corr_pi(const SingleStats & statsA, 
+double pearson_corr_pi(const SingleStats & statsA, 
 	const SingleStats & statsB) 
 	{
 	const int nloc = statsA[_pi].size();
 
-    float ay=0.0, ax=0.0;
+    double ay=0.0, ax=0.0;
 
     for (int j=0; j<nloc; j++)
    		{
@@ -488,12 +488,12 @@ float pearson_corr_pi(const SingleStats & statsA,
     ax /= nloc;
     ay /= nloc;
 
-    float syy=0.0, sxy=0.0, sxx=0.0;
+    double syy=0.0, sxy=0.0, sxx=0.0;
 
     for (int j=0; j<nloc; j++)
 		{
-        const float xt = statsA[_pi][j]-ax;
-        const float yt = statsB[_pi][j]-ay;
+        const double xt = statsA[_pi][j]-ax;
+        const double yt = statsB[_pi][j]-ay;
         sxx += xt*xt;
         syy += yt*yt;
         sxy += xt*yt;
