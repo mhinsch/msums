@@ -9,17 +9,17 @@
 #include "spinout.h"
 
 using namespace std;
-using namespace boost;
 
 typedef SPIOException SPIOE;
 
 void skip_space(istream & inp, string & str)
 	{
-	while(getline(inp, str) && all(str, is_space()));
+	while(getline(inp, str) && boost::all(str, boost::is_space()));
 	}
 
 void get_initial_conditions
-	(const string & inputfile, vector<vector<int> > & nSeq, vector<int> & nSites, 
+	(const string & inputfile, 
+	 vector<vector<int> > & n_sequences, vector<int> & n_sites, 
 	 int & ndatasets, string & datafile)
  	{
 /* reads inputfile for values of parameters and check them against legal range*/
@@ -29,26 +29,26 @@ void get_initial_conditions
 			" Error in reading initial conditions: cannot open file " + 
 			inputfile);
 	
-	int nloci, npops;
+	int n_loci, npops;
 
-	if (!get_value(inp, nloci))
+	if (!get_value(inp, n_loci))
 		throw SPIOE(ERR_LOC
 			" Error in reading initial conditions: cannot read nloci");
 	if (!get_value(inp, npops))
 	   throw SPIOE(ERR_LOC
 			" Error in reading initial conditions: cannot read npops");
 
-	//nSeq.reserve(npops);
+	//n_sequences.reserve(npops);
 
 	for(int p=0; p<npops; p++)
 		{
-		nSeq.push_back(vector<int>());
-		nSeq.back().resize(nloci);
+		n_sequences.push_back(vector<int>());
+		n_sequences.back().resize(n_loci);
 		}
 
-	nSites.resize(nloci);
+	n_sites.resize(n_loci);
 
-	for (int l=0; l<nloci; l++)
+	for (int l=0; l<n_loci; l++)
 		{
 		for (int p=0; p<npops; p++)
 			{
@@ -59,10 +59,10 @@ void get_initial_conditions
 					" Error in reading initial conditions: cannot read nSeq at locus "
 						+ lexical_cast<string>(l));
 				}
-			nSeq[p][l] = v;
+			n_sequences[p][l] = v;
 			}
 
-		if (!get_value(inp, nSites[l]))
+		if (!get_value(inp, n_sites[l]))
 			{
 			throw SPIOE(ERR_LOC
 				" Error in reading initial conditions: cannot read nSites at locus "
@@ -84,16 +84,17 @@ void get_initial_conditions
 	the outgroup.
 	@param inp file to read data from.
 	@param dataset number of current data set.
-	@param nSeq #sequences[population][locus].
-	@param nSites number of sites[locus].
-	@param seqhs sequences[population][locus][number].
-	@param seqOls outgroup data[locus].
-	@param nspolyl 
+	@param n_sequences #sequences[population][locus].
+	@param n_sites number of sites[locus].
+	@param sequences sequences[population][locus][number].
+	@param outgroup outgroup data[locus].
+	@param n_polym_sites 
 	*/
 void get_dataset(istream & inp, 
-	long dataset, const vector<vector<int> > & nSeq, const vector<int> & nSites, 
-	vector<vector<vector<string> > > & seqhs, vector<string> & seqOls, 
-	vector<int> & nspolyl)
+	long dataset, 
+	const vector<vector<int> > & n_sequences, const vector<int> & n_sites, 
+	vector<vector<Sample> > & sequences, Sample & outgroup, 
+	vector<int> & n_polym_sites)
 	{
 	int nseg;
 
@@ -101,13 +102,13 @@ void get_dataset(istream & inp,
 	const string match_positions = "positions:";
 	string str;
 
-	const int nPops = nSeq.size();
-	const int nloci = nSites.size();
+	// this is a bit non-obvious
+	const int n_pops = n_sequences.size();
+	const int n_loci = n_sites.size();
 
 	// loop over all loci
-	for (int l=0; l<nloci; l++)
+	for (int l=0; l<n_loci; l++)
 		{
-
 		istringstream itmp;
 		string stmp;
 		// skip all lines that don't start with 'segsites:'
@@ -136,29 +137,29 @@ void get_dataset(istream & inp,
 				lexical_cast<string>(dataset) + " at locus " + 
 				lexical_cast<string>(l) +  ": couldn't read number of seg sites ");
 
-		nspolyl[l] = nseg;
+		n_polym_sites[l] = nseg;
 
-		if (nseg > nSites[l]) 
+		if (nseg > n_sites[l]) 
 			{	/*if too many segregating sites*/
-			nspolyl[l] = nSites[l];
+			n_polym_sites[l] = n_sites[l];
 			// TODO: ask Ludovic whether error message in this case
 			//errorfile << "\nerror in reading dataset: nseg=" << nseg 
-			//	<< " > total number of sites=" << nSites[l] 
+			//	<< " > total number of sites=" << n_sites[l] 
 			//	<< " in locus " << l;
-			}	/*of else*/
+			}
 
 		skip_space(inp, str); // skip blanks and 'positions:' line
 
 		// for all species
-		for (int p=0; p<nPops; p++)
+		for (int p=0; p<n_pops; p++)
 			{
 			// all sequences of species p
-			for (int h=0; h<nSeq[p][l]; h++) 
+			for (int h=0; h<n_sequences[p][l]; h++) 
 				{	
-				// fill with nSites '0's
-				//seqhs[p][l][h].insert(0, nSites[l], '0');
-				seqhs[p][l][h].clear();
-				seqhs[p][l][h].resize(nSites[l], '0');
+				// fill with n_sites '0's
+				//sequences[p][l][h].insert(0, n_sites[l], '0');
+				sequences[p][l][h].clear();
+				sequences[p][l][h].resize(n_sites[l], '0');
 
 				if (nseg == 0)	// no sites, skip reading
 					continue;
@@ -172,37 +173,38 @@ void get_dataset(istream & inp,
 						lexical_cast<string>(p) + " at locus " +
 						lexical_cast<string>(l));
 
-				seqhs[p][l][h].replace(0, str.size(), str);
+				sequences[p][l][h].replace(0, str.size(), str);
 				}
 			}	/* end loop over haplotypes in species A*/
 			
-		seqOls[l].clear();
-		seqOls[l].resize(nSites[l], '0');
-		//seqOls[l].insert(0, nSites[l], '0');
+		outgroup[l].clear();
+		outgroup[l].resize(n_sites[l], '0');
+		//outgroup[l].insert(0, n_sites[l], '0');
 		}	/*end loop over loci*/
 	}		 /*end of get_dataset*/
 
 
 /*****************************************************************************/
 
-void print_initial_conditions(ostream & out, 
-	const string & inputfile, vector<vector<int> > nSeq, vector<int> nSites, 
-	long ndatasets, const string & datafile) 
 /* print initial values of parameters read from input file as a check*/
+void print_initial_conditions(ostream & out, 
+	const string & inputfile, 
+	vector<vector<int> > n_sequences, vector<int> n_sites, 
+	long ndatasets, const string & datafile) 
 	{
-	const int nLoci = nSites.size();
+	const int nLoci = n_sites.size();
 
 	out << "\nThe following informations have been successfully loaded from " 
 		<< inputfile << ":";
-	out << "\n\tnumber of populations: " << nSeq.size();
+	out << "\n\tnumber of populations: " << n_sequences.size();
 	out << "\n\tnumber of loci: " << nLoci;
 	for(int l=0;l<nLoci;l++)	/*loop over loci*/
 		{
-		for (size_t p=0; p<nSeq.size(); p++)
+		for (size_t p=0; p<n_sequences.size(); p++)
 			out << "\n\tnumber of sequences in species " << p << 
-				" at locus " << l << ":" << nSeq[p][l];
+				" at locus " << l << ":" << n_sequences[p][l];
 
-		out << "\n\t\tnumber of sites at locus " << l << ": " << nSites[l];
+		out << "\n\t\tnumber of sites at locus " << l << ": " << n_sites[l];
 		}
 
 	out << "\n\tnumber of replicate datasets: " << ndatasets; 

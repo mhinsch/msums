@@ -25,6 +25,8 @@ struct StatDict
 		addS("theta");
 		addS("D");
 		addS("pi");
+		addS("dStar");
+		addS("fStar");
 
 		addP("d");
 		addP("dn");

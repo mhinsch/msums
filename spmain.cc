@@ -89,21 +89,22 @@ int main(int argc,char *argv[])
 	string datafilename;
 
 	/** Number of sequences per population x locus.*/
-	vector<vector<int> > nSeq;
+	vector<vector<int> > n_sequences;
 	/** Number of sites per locus.*/
-	vector<int> nSites;
+	vector<int> n_sites;
 	int nDatasets;
 
 	try {
-	get_initial_conditions(inputfilename, nSeq, nSites, nDatasets, datafilename);
+	get_initial_conditions(inputfilename, 
+		n_sequences, n_sites, nDatasets, datafilename);
 	// dump initial conditions 
 	print_initial_conditions(cout, 
-		inputfilename, nSeq, nSites, nDatasets, datafilename); 
+		inputfilename, n_sequences, n_sites, nDatasets, datafilename); 
 	} catch (exception & e) 
 		{error(e.what());}
 
-	const int nPops = nSeq.size();
-	const int nLoci = nSites.size();
+	const int nPops = n_sequences.size();
+	const int nLoci = n_sites.size();
 
 
 // **** now we know #pops we can process command line arguments
@@ -143,7 +144,7 @@ int main(int argc,char *argv[])
 // **** prepare data containers
 
 	/** Sequence by species x locus x sample. */
-	vector<vector<vector<string> > > seqhs;
+	vector<vector<Sample> > seqhs;
 	// pre-allocate for efficiency
 	seqhs.reserve(nPops);
 
@@ -152,22 +153,22 @@ int main(int argc,char *argv[])
 	// building array for sequence data
 	for (int p=0; p<nPops; p++)
 		{
-		seqhs.push_back(vector<vector<string> >());
+		seqhs.push_back(vector<Sample>());
 		seqhs.reserve(nLoci);
 		for (int l=0; l<nLoci; l++)
 			{
-			seqhs[p].push_back(vector<string>());
-			seqhs[p][l].reserve(nSeq[p][l]);
-			for (int s=0; s<nSeq[p][l]; s++)
+			seqhs[p].push_back(Sample());
+			seqhs[p][l].reserve(n_sequences[p][l]);
+			for (int s=0; s<n_sequences[p][l]; s++)
 				// fill with empty strings
 				seqhs[p][l].push_back("");
 
-			maxNSeq = max(maxNSeq, nSeq[p][l]);
+			maxNSeq = max(maxNSeq, n_sequences[p][l]);
 			}
 		}
 
 	/** Outgroup data. */
-	vector<string> seqOls(nLoci);
+	Sample seqOls(nLoci);
 	/** Vector with number of polymorphic sites per locus from 0 to nLoci-1. */
 	vector<int> npolyl(nLoci);
 	
@@ -176,21 +177,23 @@ int main(int argc,char *argv[])
 		error("Error in reading data set file: cannot open file " +
 			datafilename);
 
+	// TODO: maxNSeq still needed?
 
 // **** prepare results objects
 
 	vector<SingleStats> pop_results;
 	pop_results.reserve(nPops);
 	for (int p=0; p<nPops; p++)
-		pop_results.push_back(SingleStats(nLoci, maxNSeq));
+		pop_results.push_back(SingleStats(nLoci));
 
 	PairStats pair_results(nLoci);
 
 
 // **** start reading datasets and calculating
+// **** dataset = replicate, i.e. 1 dataset = loci x pops x samples
 
 	for(int dataset=0; dataset<nDatasets; ++dataset) 
-		{    /*loop replicate datasets*/
+		{ 
 		const int imain = nDatasets/100;
 		if (imain>0 && (dataset % imain)==0) 
 			{
@@ -200,7 +203,7 @@ int main(int argc,char *argv[])
 			}
 
 		try {
-		get_dataset(input, dataset, nSeq, nSites, seqhs, seqOls, npolyl);
+		get_dataset(input, dataset, n_sequences, n_sites, seqhs, seqOls, npolyl);
 		} catch (exception & e)
 			{error(e.what());}
 

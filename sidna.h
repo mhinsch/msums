@@ -3,31 +3,78 @@
  
 #include <limits>
 #include <vector>
+#include <string>
 
 using namespace std;
 
 
-class Watterson
+typedef string Sequence;
+typedef vector<string> Sample;
+
+template<class T, class U>
+class Harmonic_Rec
 	{
-protected:
-	vector<float> _watt;
-
 public:
-	Watterson(int n)
-		: _watt(n, 0.0)
-		{}
-
-	float operator()(int n)
+	typedef T data_t;
+	
+	T operator()()
 		{
-		float & w = _watt[n];
+		return T(0);
+		}
 
-		if (!(w > 0))
-			for (int i=1; i<n; i++)
-				w += 1.0/i;
-
-		return w;
+	T operator()(T last, U curr)
+		{
+		return last + T(1)/T(curr);
 		}
 	};
+
+template<class T, class U>
+class Harmonic_2_Rec
+	{
+	typedef T data_t;
+	
+	T operator()()
+		{
+		return T(0);
+		}
+
+	T operator()(T last, U curr)
+		{
+		return last + T(1)/T(curr*curr);
+		}
+	};
+
+template<class OP>
+class RecursiveSeries
+	{
+public:
+	typedef typename OP::data_t data_t;
+	
+protected:
+	vector<data_t> _data;
+	OP _op;
+
+public:
+	RecursiveSum()
+		: _data(1)
+		{
+		_data[0] = _op;
+		}
+	
+	data_t operator()(int n)
+		{
+		for (size_t i=_data.size(); i<=n; i++)
+			_data.push_back(_op(_data.back(), i));
+		
+		return _data[n];
+		}
+	};
+
+typedef RecursiveSeries<Harmonic_Rec<float, int> > Harmonic;
+typedef RecursiveSeries<Harmonic_2_Rec<float, int> > Harmonic_2;
+	
+extern Harmonic harmonic;
+extern Harmonic_2 harmonic_2;
 
 inline double undefined()
 	{
@@ -115,6 +162,8 @@ enum SStatsI {
 	_theta,
 	_D,
 	_pi,
+	_dStar,
+	_fStar,
 	_sstats_last};
 
 enum PStatsI {
@@ -192,16 +241,16 @@ public:
 /*defines the structure used to store results from shared sites, fixed sites per locus*/
 class SingleStats : public StatList<SStatsI, _sstats_last>
 	{
-protected:
-	Watterson _watt;
-
 public:
-	SingleStats(int nLoci=0, int maxNSeq=0)
-		: StatList<SStatsI, _sstats_last>(nLoci), _watt(maxNSeq) 		
+	SingleStats(int nLoci=0)
+		: StatList<SStatsI, _sstats_last>(nLoci)	
 		{ }
 
 	void compute_pi_theta(const size_t locus,
-		const vector<string> & seqlhs, int nspolyl);
+		const Sample & seqlhs, int nspolyl);
+
+	void compute_fu_li(const size_t locus,
+		const Sample & seqlhs, int nspolyl);
 	};
 
 
@@ -214,13 +263,13 @@ public:
 		{ }
 
 	void compute_div_fst(const size_t locus,
-		const vector<string> & seqAlhs, const vector<string> & seqBlhs,
+		const Sample & seqAlhs, const Sample & seqBlhs,
 		const SingleStats & statsA, const SingleStats & statsB,
 		int nspolyl);
 
 	void compute_polyl(const size_t locus,
-		const vector<string> & seqAlhs, const vector<string> & seqBlhs, 
-		int nspolyl, const string & seqOls, bool outgroup = false);
+		const Sample & seqAlhs, const Sample & seqBlhs, 
+		int nspolyl, const Sequence & seqOls, bool outgroup = false);
 
 	};
 

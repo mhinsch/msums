@@ -79,7 +79,7 @@ void print_initial_conditions(ostream & out,
 	*/
 void get_dataset(istream & inp, 
 	long dataset, const vector<vector<int> > & nSeq, const vector<int> & nSites, 
-	vector<vector<vector<string> > > & seqhs, vector<string> & seqOls, 
+	vector<vector<Sample> > & seqhs, Sample & seqOls, 
 	vector<int> & nspolyl);
 
 /** Initialize the output file where writing statistics of shared and fixed 

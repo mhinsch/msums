@@ -1,0 +1,17 @@
+- skewness, kurtosis
+- Patterson's f3, f4, D
+- output of list of available stats
+- integrate fu, li
+	- run calculation
+	- output
+	- command line
+	- caching?
+	- check results
+	- check with paper
+- generic caching?
+- replace dependencies with caching?
+- float -> double?
+- check pi, theta
+
+? use boost command line processing
+
