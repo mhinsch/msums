@@ -37,6 +37,7 @@ int main(int argc,char *argv[])
 	string statfilename = "ABCstat.txt";
 	bool printPerLocus = false;
 	bool printHelp = false;
+	bool listStats = false;
 	
 	typedef OpList::Collector OLIter;
 	OpList popList, statList;
@@ -48,6 +49,7 @@ int main(int argc,char *argv[])
 	UnaryOption<string> o_sfn(p, 'o', "output", statfilename);
 	SwitchOption o_ppl(p, 'l', "print_per_locus", printPerLocus);
 	SwitchOption o_hlp(p, 'h', "help", printHelp);
+	SwitchOption o_list(p, 'a', "list_stats", listStats);
 	NaryOption<string, OLIter> o_ds(p, 's', "dropStats", dropS);
 	NaryOption<string, OLIter> o_ks(p, 'S', "keepStats", keepS);
 	NaryOption<string, OLIter> o_dp(p, 'p', "dropPops", dropP);
@@ -70,9 +72,10 @@ int main(int argc,char *argv[])
 "-i, --init FILE       Use this initialization file. [spinput.txt]\n"
 "-o, --output FILE     Use this output file. [ABCstat.txt]\n"
 "-h, --help            Print the help text and exit.\n"
+"-a, --list_stats      Print list of available stats and exit.\n"
 "-l, --print_per_locus Print stats per locus, don't print aggregate values.\n"
 "                      [false]\n"
-"-S, --keepStats LIST  Print stats in LIST. LIST is a space-separatedi list of\n"
+"-S, --keepStats LIST  Print stats in LIST. LIST is a space-separated list of\n"
 "                      stat names. 'all' selects all stats.\n"
 "-S, --dropStats LIST  Do *not* print stats in LIST (see above).\n"
 "-P, --keepPops LIST   Show populations or pairs in LIST. Populations can be\n"
@@ -83,6 +86,13 @@ int main(int argc,char *argv[])
 		exit(0);
 		}
 
+	if (listStats)
+		{
+		cout << "sorry, not implemented yet :-(\n";
+
+		exit(0);
+		}
+
 
 // **** starts initializations by getting initial conditions
 
@@ -90,30 +100,31 @@ int main(int argc,char *argv[])
 
 	/** Number of sequences per population x locus.*/
 	vector<vector<int> > n_sequences;
-	/** Number of sites per locus.*/
+	/** Number of sites per locus. Assumes all sequences per locus are the
+	    same length. */
 	vector<int> n_sites;
-	int nDatasets;
+	int n_datasets;
 
 	try {
 	get_initial_conditions(inputfilename, 
-		n_sequences, n_sites, nDatasets, datafilename);
+		n_sequences, n_sites, n_datasets, datafilename);
 	// dump initial conditions 
 	print_initial_conditions(cout, 
-		inputfilename, n_sequences, n_sites, nDatasets, datafilename); 
+		inputfilename, n_sequences, n_sites, n_datasets, datafilename); 
 	} catch (exception & e) 
 		{error(e.what());}
 
-	const int nPops = n_sequences.size();
-	const int nLoci = n_sites.size();
+	const int n_pops = n_sequences.size();
+	const int n_loci = n_sites.size();
 
 
 // **** now we know #pops we can process command line arguments
 
-	vector<bool> showPops(nPops, true);
+	vector<bool> showPops(n_pops, true);
 	vector<vector<bool> > showPairs;
-	showPairs.reserve(nPops);
-	for (int p=0; p<nPops; p++)
-		showPairs.push_back(vector<bool>(nPops, true));
+	showPairs.reserve(n_pops);
+	for (int p=0; p<n_pops; p++)
+		showPairs.push_back(vector<bool>(n_pops, true));
 	// process command line selection of pops/pairs
 	selectPops(popList.getList(), showPops, showPairs);
 
@@ -144,57 +155,55 @@ int main(int argc,char *argv[])
 // **** prepare data containers
 
 	/** Sequence by species x locus x sample. */
-	vector<vector<Sample> > seqhs;
+	vector<vector<Sample> > sequences;
 	// pre-allocate for efficiency
-	seqhs.reserve(nPops);
+	sequences.reserve(n_pops);
 
 	int maxNSeq = 0;
 
 	// building array for sequence data
-	for (int p=0; p<nPops; p++)
+	for (int p=0; p<n_pops; p++)
 		{
-		seqhs.push_back(vector<Sample>());
-		seqhs.reserve(nLoci);
-		for (int l=0; l<nLoci; l++)
+		sequences.push_back(vector<Sample>());
+		sequences.reserve(n_loci);
+		for (int l=0; l<n_loci; l++)
 			{
-			seqhs[p].push_back(Sample());
-			seqhs[p][l].reserve(n_sequences[p][l]);
+			sequences[p].push_back(Sample());
+			sequences[p][l].reserve(n_sequences[p][l]);
 			for (int s=0; s<n_sequences[p][l]; s++)
 				// fill with empty strings
-				seqhs[p][l].push_back("");
+				sequences[p][l].push_back("");
 
 			maxNSeq = max(maxNSeq, n_sequences[p][l]);
 			}
 		}
 
 	/** Outgroup data. */
-	Sample seqOls(nLoci);
-	/** Vector with number of polymorphic sites per locus from 0 to nLoci-1. */
-	vector<int> npolyl(nLoci);
+	Sample outgroup(n_loci);
+	/** Vector with number of polymorphic sites per locus from 0 to n_loci-1. */
+	vector<int> n_polym_sites(n_loci);
 	
 	ifstream input(datafilename.c_str());
 	if (!input.good())
 		error("Error in reading data set file: cannot open file " +
 			datafilename);
 
-	// TODO: maxNSeq still needed?
-
 // **** prepare results objects
 
 	vector<SingleStats> pop_results;
-	pop_results.reserve(nPops);
-	for (int p=0; p<nPops; p++)
-		pop_results.push_back(SingleStats(nLoci));
+	pop_results.reserve(n_pops);
+	for (int p=0; p<n_pops; p++)
+		pop_results.push_back(SingleStats(n_loci));
 
-	PairStats pair_results(nLoci);
+	PairStats pair_results(n_loci);
 
 
 // **** start reading datasets and calculating
 // **** dataset = replicate, i.e. 1 dataset = loci x pops x samples
 
-	for(int dataset=0; dataset<nDatasets; ++dataset) 
+	for(int dataset=0; dataset<n_datasets; ++dataset) 
 		{ 
-		const int imain = nDatasets/100;
+		const int imain = n_datasets/100;
 		if (imain>0 && (dataset % imain)==0) 
 			{
 			string t_str;
@@ -203,102 +212,119 @@ int main(int argc,char *argv[])
 			}
 
 		try {
-		get_dataset(input, dataset, n_sequences, n_sites, seqhs, seqOls, npolyl);
+		get_dataset(input, dataset, 
+			n_sequences, n_sites, sequences, outgroup, n_polym_sites);
 		} catch (exception & e)
 			{error(e.what());}
-
-		// calculate single-pop results for all pops and loci, 
-		// need the list anyways for aggregates,
-		// thus can be done for locus-wise *and* aggr printing
-		for (int p=0; p<nPops; p++)
-			{
-			if (!compSingles[p])
-				continue;
-
-			pop_results[p].reset();
-
-			for(int l=0; l<nLoci; l++)
-				pop_results[p].compute_pi_theta(l, seqhs[p][l], npolyl[l]);
-			}
 
 		// new data set
 		abcstatfile << "\n"; 
 
 		if (printPerLocus)
-			{
-			for(int l=0; l<nLoci; l++)	
-				{
-				// new locus
-				abcstatfile << "\n" << dataset << "\t" << l;
-				for (int p=0; p<nPops; p++)
-					{
-					if (!compSingles[p])
-						continue;
-					writeLResults(abcstatfile, pop_results[p], showSStats, l);
-					}
-				
-				for (int spA=0; spA<nPops-1; spA++)
-					for (int spB=spA+1; spB<nPops; spB++)
-						{
-						if (!showPairs[spA][spB])
-							continue;
-
-						pair_results.reset();
-
-						// TODO: add polyl and div_fst to dependencies
-						pair_results.compute_polyl(l,
-							seqhs[spA][l], seqhs[spB][l], npolyl[l], seqOls[l]);
-						pair_results.compute_div_fst(l,
-							seqhs[spA][l], seqhs[spB][l], 
-							pop_results[spA], pop_results[spB],
-							npolyl[l]);
-				
-						writeLResults(abcstatfile, pair_results, showPStats, l);
-						}
-				}
-			}
+			analyse(abcstatfile, sequences, stats_per_locus);
 		else
-			{
-			abcstatfile << dataset;
-
-			for (int p=0; p<nPops; p++)
-				{
-				pop_results[p].compute_aggr();
-				writeResults(abcstatfile, pop_results[p], showSStats);
-				}
-
-			for (int spA=0; spA<nPops-1; spA++)
-				for (int spB=spA+1; spB<nPops; spB++)
-					{
-					if (!showPairs[spA][spB])
-						continue;
-
-					pair_results.reset();
-
-					// TODO: add polyl and div_fst to dependencies
-					for(int l=0; l<nLoci; l++)	
-						{
-						pair_results.compute_polyl(l,
-							seqhs[spA][l], seqhs[spB][l], npolyl[l], seqOls[l]);
-						pair_results.compute_div_fst(l,
-							seqhs[spA][l], seqhs[spB][l], 
-							pop_results[spA], pop_results[spB],
-							npolyl[l]);
-						}
-
-					pair_results.compute_aggr();
-					writeResults(abcstatfile, pair_results, showPStats);
-					}
-			}
-
-		}	/*end loop over replicate datasets*/
+			analyse(abcstatfile, sequences, stats_aggregate);
+		}
 
 	return 0;
 	}    /*end Main*/
 
+void analyse(ostream & abcstatfile, const vector<vector<Sample> > & sequences,
+	vector<AnalysisBase *> single_stats)
+	{
+	const size_t n_loci = sequences[0].size();
+	const size_t n_pops = sequences.size();
 
-void selectStats(const vector<vector<string> > & sel, 
-	vector<bool> & sstats, vector<bool> & pstats, StatDict & dict)
+	for(size_t l=0; l<n_loci; l++)	
+		{
+		// new locus
+		abcstatfile << "\n" << dataset << "\t" << l;
+
+		for (size_t p=0; p<n_pops; p++)
+			{
+			if (!compSingles[p])
+				continue;
+
+			for (int stat=0; stat<single_stats.size(); stat++)
+				abcstatfile << '\t' <<
+					single_stats[stat]->analyse(sequences[p][l]);
+			}
+		
+		for (size_t pop1=0; pop1<n_pops-1; pop1++)
+			for (size_t pop2=pop1+1; pop2<n_pops; pop2++)
+				{
+				if (!showPairs[pop1][pop2])
+					continue;
+
+				const Sample p1 = sequences[pop1][l];
+				const Sample p2 = sequences[pop2][l];
+				for (size_t stat=0; stat<pair_stats.size(); stat++)
+					{
+					pair_stats[stat]->analyse(p1, p2);
+
+					abcstatfile << '\t' << pair_stats[stat].mean()
+						<< '\t' << pair_stats.var();
+					}
+				}
+		}
+	}
+
+
+void analyse_aggr(ostream & abcstatfile, 
+	const vector<vector<Sample> > & sequences,
+	vector<AnalysisBase *> single_stats)
+	{
+	const size_t n_pops = sequences.size();
+
+	abcstatfile << dataset;
+
+	for (size_t p=0; p<n_pops; p++)
+		{
+		for (size_t stat=0; stat<single_stats.size(); stat++)
+			{
+			Aggregate aggregate;
+			for (size_t l=0; l<sequences[p].size(); l++)
+				agreggate(single_stats[stat]->analyse(sequences[p]));
+
+			aggregate.analyse();
+			abcstatfile << '\t' << aggregate.mean() << '\t'<< aggregate.var();
+			}
+		}
+
+	vector<Aggregate> aggregates();
+
+	for (size_t pop1=0; pop1<n_pops-1; pop1++)
+		for (size_t pop2=pop1+1; pop2<n_pops; pop2++)
+			{
+			if (!showPairs[pop1][pop2])
+				continue;
+
+			const vector<Sample> p1 = sequences[pop1];
+			const vector<Sample> p2 = sequences[pop2];
+
+			aggregates.clear();
+			aggregates.resize(pair_stats.size());
+
+			for (size_t l=0; l<p1.size(); l++)
+				{
+				// PairSample caches analysis results
+				PairSample ps(p1[l], p2[l]);
+				for (size_t stat=0; stat<pair_stats.size(); stat++)
+					aggregate[stat](pair_stats[stat]->analyse(ps));
+				}
+
+			for (size_t stat=0; stat<pair_stats.size(); stat++)
+				{
+				aggregate[stat].analyse();
+				abcstatfile << '\t' << aggregate[stat].mean() <<
+				   	'\t' << aggregate[stat].var();
+				}
+			}
+	}
+
+void selectStats(
+	const vector<vector<string> > & sel, 
+	const vector<string> & all, set<string> & use)
 	{
 	for (size_t s=0; s<sel.size(); s++)
 		{
@@ -309,19 +335,21 @@ void selectStats(const vector<vector<string> > & sel,
 			cerr << ", " << sel[s][t];
 			if (sel[s][t] == "all")
 				{
-				for (size_t s=0; s<sstats.size(); s++)
-					sstats[s] = to;
-				for (size_t s=0; s<pstats.size(); s++)
-					pstats[s] = to;
+				for (size_t s=0; s<all.size(); s++)
+					if (to)
+						use.insert(all[s]);
+					else
+						use.erase(all[s]);
 				continue;
 				}
 
-			if (dict.idxSingles.find(sel[s][t]) != dict.idxSingles.end())
-				sstats[dict.idxSingles[sel[s][t]]] = to;
-			else if (dict.idxPairs.find(sel[s][t]) != dict.idxPairs.end())
-				pstats[dict.idxPairs[sel[s][t]]] = to;
+				error(
+					"Error in parameters: stat '" + sel[s][t] + "' unknown!");
+
+			if (to)
+				use.insert(sel[s][t]);
 			else
-				error("Error in parameters: stat '" + sel[s][t] + "' unknown!");
+				use.erase(sel[s][t]);
 			}
 		cerr << endl;
 		}

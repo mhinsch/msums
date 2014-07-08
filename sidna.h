@@ -1,7 +1,6 @@
 #ifndef SIDNA_H
 #define SIDNA_H
  
-#include <limits>
 #include <vector>
 #include <string>
 
@@ -10,16 +9,6 @@
 
 using namespace std;
 
-
-typedef string Sequence;
-typedef vector<string> Sample;
-
-
-typedef RecursiveSeries<Harmonic_Rec<double, int> > Harmonic;
-typedef RecursiveSeries<Harmonic_2_Rec<double, int> > Harmonic_2;
-	
-extern Harmonic harmonic;
-extern Harmonic_2 harmonic_2;
 
 template<typename T>
 class Stats
@@ -178,40 +167,6 @@ public:
 		}
 	};
 
-/*defines the structure used to store results from shared sites, fixed sites per locus*/
-class SingleStats : public StatList<SStatsI, _sstats_last>
-	{
-public:
-	SingleStats(int nLoci=0)
-		: StatList<SStatsI, _sstats_last>(nLoci)	
-		{ }
-
-	void compute_pi_theta(const size_t locus,
-		const Sample & seqlhs, int nspolyl);
-
-	void compute_fu_li(const size_t locus,
-		const Sample & seqlhs, int nspolyl);
-	};
-
-
-class PairStats : public StatList<PStatsI, _pstats_last>
-	{
-public:
-	
-	PairStats(int nLoci)
-		: StatList<PStatsI, _pstats_last>(nLoci)
-		{ }
-
-	void compute_div_fst(const size_t locus,
-		const Sample & seqAlhs, const Sample & seqBlhs,
-		const SingleStats & statsA, const SingleStats & statsB,
-		int nspolyl);
-
-	void compute_polyl(const size_t locus,
-		const Sample & seqAlhs, const Sample & seqBlhs, 
-		int nspolyl, const Sequence & seqOls, bool outgroup = false);
-
-	};
 
 double pearson_corr_pi(const SingleStats & statsA, const SingleStats & statsB);
 

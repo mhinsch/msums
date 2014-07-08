@@ -90,30 +90,5 @@ void initialize_write_ABCstat(ostream & file,
 	const StatDict & dict, bool writeAggr);
 
 
-template<typename STATLIST>
-void writeResults(ostream & out, 
-	const STATLIST & results, const vector<bool> & stats)
-	{
-	for (size_t i=0; i<stats.size(); i++)
-		{
-		if (!stats[i])
-			continue;
-		out << '\t' << results[typename STATLIST::idx_type(i)].mean() <<
-			'\t' << results[typename STATLIST::idx_type(i)].std();
-		}
-	}
-
-template<typename STATLIST>
-void writeLResults(ostream & out,
-	const STATLIST & results, const vector<bool> & stats, int locus)
-	{
-	for (size_t i=0; i<stats.size(); i++)
-		{
-		if (!stats[i])
-			continue;
-		out << '\t' << results[typename STATLIST::idx_type(i)][locus];
-		}
-	}
-
 
 #endif	//SPINOUT_H
