@@ -6,11 +6,11 @@
 #include "sample.h"
 #include "stats_multi.h"
 
-template<class SEQ>
+template<class SEQ, class STATE>
 class PairSample
 	{
 public:
-	typedef Sample<SEQ> sample_t;
+	typedef Sample<SEQ, STATE> sample_t;
 
 protected:
 	const sample_t & _p1, & _p2;
@@ -18,9 +18,10 @@ protected:
 
 	mutable CachedValue<int> _spd;
 	mutable CachedValue<double> _fst;
-	mutable CachedValue<double> _pattersonD;
+	mutable CachedValue<double> _patterson_D;
 	mutable CachedValue<PolyL> _poly_l;
-	mutable CachedValue<PolyNavascues> _poly_n;
+	mutable CachedValue<pair<int, int> > _navascues_R;
+	mutable CachedValue<pair<double, double> > _navascues_W;
 
 public:
 	PairSample(const sample_t & p1, const sample_t & p2)
@@ -33,7 +34,7 @@ public:
 		if (_spd.ready())
 			return _spd;
 
-		int n_poly_sites = std::max(_p1.n_poly_sites(), _p2.n_poly_sites());
+		int n_poly_sites = std::max(_p1.n_sites(), _p2.n_sites());
 		return _spd = sum_pair_diff(
 			_p1.alleles().begin(), _p1.alleles().begin() + n_poly_sites,
 			_p2.alleles().begin(), _p2.alleles().begin() + n_poly_sites);
@@ -58,11 +59,11 @@ public:
 			undefined());
 		}
 
-	double patterson_D const
+	double patterson_D() const
 		{
 		return CACHED_OR_COMPUTE(_patterson_D, ::patterson_D(
 				_p1.alleles().begin(), _p1.alleles().end(),
-				_p2.alleles().begin(), _p2.alleles().end());
+				_p2.alleles().begin(), _p2.alleles().end()));
 		}
 
 	// name?
@@ -118,25 +119,32 @@ public:
 	double wald() const
 		{ return poly_l().wald; }
 
-
-	const PolyNavascues & poly_n() const
+	const pair<int, int> & navascues_R() const
 		{
-		if (!_poly_n.ready())
-			{
-			_poly_n.get().compute(
+		return CACHED_OR_COMPUTE(_navascues_R, ::navascues_R(
 				_p1.alleles().begin(), _p1.alleles().end(),
-				_p2.alleles().begin(), _p2.alleles().end());
-			_poly_n.set_ready();
-			}
-
-		return _poly_n;
+				_p2.alleles().begin(), _p2.alleles().end()));
 		}
 
 	int Rf() const
-		{ return poly_n().count_rf; }
+		{ return navascues_R().first; }
 
 	int Rs() const 
-		{ return poly_n().count_rs; }
+		{ return navascues_R().second; }
 
+	const pair<double, double> & navascues_W() const
+		{
+		return CACHED_OR_COMPUTE(_navascues_W, navascues_W_01(
+				_p1.alleles().begin(), _p1.alleles().end(),
+				_p2.alleles().begin(), _p2.alleles().end()));
+		}
+
+	double Wx2s1() const
+		{ return navascues_W().first; }
+
+	double Wx1s2() const 
+		{ return navascues_W().second; }
 	};
+
+
 #endif	// GROUPSAMPLE_H

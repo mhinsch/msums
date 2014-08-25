@@ -77,12 +77,12 @@ void read_dataset(istream & inp, size_t dataset,
 		// for all population
 		for (size_t p=0; p<n_pops; p++)
 			{
-			sequences[p][l].set_n_poly_sites(nseg);
+			sequences[p][l].set_tot_n_sites(n_sites[l]);
 			// all sequences of population p
 			for (size_t h=0; h<n_sequences[p][l]; h++) 
 				{	
 				string & seq = sequences[p][l].sequence(h);
-				seq.reserve(n_sites[l]);
+				seq.reserve(nseg);
 
 				// careful, this is two things in one
 				if (nseg>0 && !getline(inp, seq))
@@ -94,16 +94,13 @@ void read_dataset(istream & inp, size_t dataset,
 						lexical_cast<string>(p) + " at locus " +
 						lexical_cast<string>(l));
 
-				//cerr << nseg << " #### " << seq << "\n";
-
-				// pad with 0s
-				seq.resize(n_sites[l], '0');
-
+				// we don't do this anymore
+				// seq.resize(n_sites[l], '0');
 				}
 			}	/* end loop over haplotypes in population A*/
 			
 		outgroup[l].clear();
-		outgroup[l].resize(n_sites[l], '0');
+		outgroup[l].resize(nseg, '0');
 		}	/*end loop over loci*/
 	}		 /*end of get_dataset*/
 

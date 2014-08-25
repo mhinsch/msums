@@ -2,13 +2,14 @@
 #define SPMAIN_H
 
 #include <vector>
-#include <map>
 #include <set>
+#include <map>
 #include <string>
 
-#include "anafunctors.h"
 #include "sample.h"
 #include "pairsample.h"
+#include "anafunctors.h"
+#include "groupana.h"
 
 using namespace std;
 
@@ -72,59 +73,19 @@ public:
 	};
 
 
-typedef Sample<string> StrSample;
-typedef PairSample<string> PairStrSample;
+typedef Sample<string, char> StrSample;
+typedef PairSample<string, char> PairStrSample;
 
 class SSHandler : public AnalysisHandler<AnalysisBase<StrSample > >
 	{
 public:
-	SSHandler()
-		{
-		typedef StrSample sample_t;
-
-		typedef AnalysisWrapper<sample_t, double> SD;
-		typedef AnalysisWrapper<sample_t, int> SI;
-
-		add("pairdif", SI::create<&sample_t::sum_pairwise_differences>());
-		add("segr", SI::create<&sample_t::n_segregating_sites>());
-		add("singlet", SI::create<&sample_t::n_singletons>());
-		add("thpi", SD::create<&sample_t::theta_pi>());
-		add("thW", SD::create<&sample_t::theta_W>());
-		add("flDstar", SD::create<&sample_t::fu_li_Dstar>());
-		add("flFstar", SD::create<&sample_t::fu_li_Fstar>());
-		add("tD", SD::create<&sample_t::tajima_D>());
-		add("R2", SD::create<&sample_t::R2>());
-		}
+	SSHandler();
 	};
 
 class PSHandler : public AnalysisHandler<AnalysisBase<PairStrSample > >
 	{
 public:
-	PSHandler()
-		{
-		typedef PairStrSample sample_t;
-
-		typedef AnalysisWrapper<sample_t, double> SD;
-		typedef AnalysisWrapper<sample_t, int> SI;
-
-		add("d", SI::create<&sample_t::sum_pairwise_differences>());
-		add("dn", SD::create<&sample_t::dn>());
-		add("FST", SD::create<&sample_t::fst>());
-		add("bialsites", SI::create<&sample_t::n_bial_sites>());
-		add("multisites", SI::create<&sample_t::n_multi_sites>());
-		add("sfA", SI::create<&sample_t::sfA>());
-		add("sfB", SI::create<&sample_t::sfB>());
-		add("sfout", SI::create<&sample_t::sfout>());
-		add("sxA", SI::create<&sample_t::sxA>());
-		add("sxB", SI::create<&sample_t::sxB>());
-		add("sxAfB", SI::create<&sample_t::sxAfB>());
-		add("sxBfA", SI::create<&sample_t::sxBfA>());
-		add("ss", SI::create<&sample_t::ss>());
-		add("Wald", SD::create<&sample_t::wald>());
-		add("Rf", SI::create<&sample_t::Rf>());
-		add("Rs", SI::create<&sample_t::Rs>());
-		add("pattD", SD::create<&sample_t::patterson_D>());
-		}
+	PSHandler();
 	};
 
 template<class SAMPLEV>
@@ -132,7 +93,7 @@ class GroupStatHandler
 	{
 public:
 	typedef vector<size_t> group_t;
-	typedef AnalysisBase<SAMPLEI> analysis_t;
+	typedef AnalysisBase<SAMPLEV> analysis_t;
 
 protected:
 	vector<group_t> _groups;
@@ -145,9 +106,9 @@ public:
 		analysis_t * ana = 0;
 
 		if (name == "f3")
-			ana = new PatF3<SAMPLEV>;
+			ana = new PatF3<SAMPLEV>();
 		else if (name == "f4")
-			ana = new PatF4<SAMPLEV>;
+			ana = new PatF4<SAMPLEV>();
 
 		if (! ana)
 			{

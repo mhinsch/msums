@@ -11,8 +11,8 @@ SSHandler::SSHandler()
 	add("pairdif", SI::create<&sample_t::sum_pairwise_differences>());
 	add("segr", SI::create<&sample_t::n_segregating_sites>());
 	add("singlet", SI::create<&sample_t::n_singletons>());
-	add("thpi", SD::create<&sample_t::theta_pi>());
-	add("thW", SD::create<&sample_t::theta_W>());
+	add("thpi", SD::create<&sample_t::theta_pi_s>());
+	add("thW", SD::create<&sample_t::theta_W_s>());
 	add("flDstar", SD::create<&sample_t::fu_li_Dstar>());
 	add("flFstar", SD::create<&sample_t::fu_li_Fstar>());
 	add("tD", SD::create<&sample_t::tajima_D>());

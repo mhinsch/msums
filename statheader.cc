@@ -22,22 +22,22 @@ void write_stat_name(ostream & file, const string & name,
 
 string stat_name(const string & name, size_t p)
 	{
-	ostringstream oss(name);
-	oss << '_' << p;
+	ostringstream oss;
+	oss << name << '_' << p;
 	return oss.str();
 	}
 	
 string stat_name(const string & name, size_t p1, size_t p2)
 	{
-	ostringstream oss(name);
-	oss << '_' << p1 << 'x' << p2;
+	ostringstream oss;
+	oss << name << '_' << p1 << 'x' << p2;
 	return oss.str();
 	}
 
 string stat_name(const string & name, const vector<size_t> & group)
 	{
-	ostringstream oss(name);
-	oss << '_';
+	ostringstream oss;
+	oss << name << '_';
 	copy(group.begin(), group.end(), ostream_iterator<size_t>(oss, "x"));
 	return oss.str();
 	}
@@ -49,7 +49,7 @@ string stat_name(const string & name, const vector<size_t> & group)
 void write_ABCstat_header(ostream & file, 
 	const vector<bool> & pops, const vector<vector<bool> > & pairs, 
 	const vector<string> & ss_names, const vector<string> & ps_names,
-	const vector<string> & ms_names, const vector<vector<size_t> > & groups,
+	const vector<string> & gs_names, const vector<vector<size_t> > & gs_groups,
 	bool write_aggr)
 	{
 	file << "\ndataset";
@@ -77,8 +77,8 @@ void write_ABCstat_header(ostream & file,
 				write_stat_name(file, stat_name(ps_names[s], p, pp), write_aggr);
 			}
 
-	for (size_t s=0; s<ms_names.size(); s++)
-		write_stat_name(file, stat_name(ms_names[s], groups[s]), write_aggr);
+	for (size_t s=0; s<gs_names.size(); s++)
+		write_stat_name(file, stat_name(gs_names[s], gs_groups[s]), write_aggr);
 
 	file << endl;
 	}

@@ -13,7 +13,7 @@ typedef SPIOException SPIOE;
 
 void ConfigFile::read(istream & inp)
  	{
-	int n_loci, npops;
+	size_t n_loci, npops;
 
 	if (!get_value(inp, n_loci))
 		throw SPIOE(ERR_LOC
@@ -52,10 +52,10 @@ void ConfigFile::read(istream & inp)
 			}
 		}
 
-	if (!get_value(inp, _ndatasets))
+	if (!get_value(inp, _n_datasets))
 		throw SPIOE(ERR_LOC
 			" Error in reading inital conditions: cannot read ndatasets");
-	if (!get_value(inp, _datafile))
+	if (!get_value(inp, _datafilename))
 	   throw SPIOE(ERR_LOC	
 			" Error in reading initial conditions: cannot read data file name");
 	} 
@@ -68,7 +68,7 @@ void ConfigFile::dump(ostream & out)
 
 	out << "\n\tnumber of populations: " << _n_sequences.size();
 	out << "\n\tnumber of loci: " << nLoci;
-	for(int l=0;l<nLoci;l++)	/*loop over loci*/
+	for(size_t l=0;l<nLoci;l++)	/*loop over loci*/
 		{
 		for (size_t p=0; p<_n_sequences.size(); p++)
 			out << "\n\tnumber of sequences in population " << p << 
@@ -77,8 +77,8 @@ void ConfigFile::dump(ostream & out)
 		out << "\n\t\tnumber of sites at locus " << l << ": " << _n_sites[l];
 		}
 
-	out << "\n\tnumber of replicate datasets: " << _ndatasets; 
-	out << "\n\tname of the dataset file: " << _datafile;
+	out << "\n\tnumber of replicate datasets: " << _n_datasets; 
+	out << "\n\tname of the dataset file: " << _datafilename;
 	out << "\n\n";
 	}	  /*end of print_initial_conditions*/
 

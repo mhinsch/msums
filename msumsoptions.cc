@@ -32,5 +32,5 @@ void MSUMSOptions::do_print_help()
 
 void MSUMSOptions::do_list_stats()
 	{
-	cout << "sorry, not implemented yet :-(\n",
+	cout << "sorry, not implemented yet :-(\n";
 	}

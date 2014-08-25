@@ -5,20 +5,22 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 class ConfigFile
 	{
 protected:
-	std::string _datafilename;
+	string _datafilename;
 	/** Number of sequences per population x locus.*/
-	std::vector<std::vector<size_t> > _n_sequences;
+	vector<vector<size_t> > _n_sequences;
 	/** Number of sites per locus. Assumes all sequences per locus are the
 	    same length. */
-	std::vector<size_t> _n_sites;
+	vector<size_t> _n_sites;
 	size_t _n_datasets;
 
 public:
-	void read(std::istream & in);
-	void dump(std::ostream & out);
+	void read(istream & in);
+	void dump(ostream & out);
 
 	size_t n_pops() const
 		{
@@ -34,9 +36,14 @@ public:
 		return _n_datasets;
 		}
 
-	const std::vector<std::vector<size_t> > & n_sequences() const
+	const vector<vector<size_t> > & n_sequences() const
 		{
 		return _n_sequences;
+		}
+
+	const vector<size_t> & n_sites() const
+		{
+		return _n_sites;
 		}
 
 	const string & datafilename() const

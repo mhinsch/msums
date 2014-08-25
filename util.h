@@ -4,162 +4,68 @@
 #include <vector>
 #include <limits>
 
-template<class T, class U>
-class Harmonic_Rec
+
+template<class T>
+class CachedValue
 	{
-public:
-	typedef T data_t;
-	
-	T operator()()
-		{
-		return T(0);
-		}
-
-	T operator()(T last, U curr)
-		{
-		return last + T(1)/T(curr);
-		}
-	};
-
-template<class T, class U>
-class Harmonic_2_Rec
-	{
-public:
-	typedef T data_t;
-	
-	T operator()()
-		{
-		return T(0);
-		}
-
-	T operator()(T last, U curr)
-		{
-		return last + T(1)/T(curr*curr);
-		}
-	};
-
-template<class OP>
-class RecursiveSeries
-	{
-public:
-	typedef typename OP::data_t data_t;
-	
 protected:
-	std::vector<data_t> _data;
-	OP _op;
+	bool _ready;
+	T _value;
 
 public:
-	RecursiveSeries()
-		: _data(1)
+	CachedValue()
+		: _ready(false)
+		{}
+
+	void reset()
 		{
-		_data[0] = _op();
-		}
-	
-	template<class I>
-	data_t operator()(I n)
-		{
-		for (size_t i=_data.size(); i<=n; i++)
-			_data.push_back(_op(_data.back(), i));
-		
-		return _data[n];
-		}
-	};
-
-typedef RecursiveSeries<Harmonic_Rec<double, int> > Harmonic;
-typedef RecursiveSeries<Harmonic_2_Rec<double, int> > Harmonic_2;
-
-inline double undefined()
-	{
-	return std::numeric_limits<double>::quiet_NaN();
-	}
-
-template<class I>
-I num_pairs(I n) { return n*(n-1)/2; }
-
-class InvalidEnsure : public std::exception
-	{
-public:
-	const char * what()
-		{
-		return "No operations on const object possible!";
-		}
-	};
-
-template<class CLASS>
-struct EnsureCalled
-	{
-	template<void (CLASS::*FUNC)()>
-	static bool was_called()
-		{
-		static bool called = false;
-
-		if (called) return true;
-
-		return !(called = true);
+		_ready = false;
 		}
 
-	template<void (CLASS::*FUNC)()>
-	bool did(const CLASS & object) const
+	bool ready() const
 		{
-		if (was_called<FUNC>())	// all is well
-			return false;
-
-		// can't call function on const object!
-		throw InvalidEnsure();
+		return _ready;
 		}
 
-	template<void (CLASS::*FUNC)()>
-	bool did(CLASS & object)() const
+	void set_ready()
 		{
-		if (was_called<FUNC>())
-			return false;
-
-		object.*FUNC();
-		return true;
+		_ready = true;
 		}
-	};
 
-template<class CLASS>
-struct WrapCached
-	{
-	struct Base
+	const T & operator=(const T & value)
 		{
-		bool called;
-		const CLASS & object;
+		set_ready();
+		_value = value;
+		return _value;
+		}
 
-		Base(bool c, CLASS & o)
-			: called(c), object(o)
-			{}
-		};
-
-	template<class T, T (CLASS::* FUNC)()>
-	struct CachedValue : public Base
+	const T & operator()(const T & value)
 		{
-		T value;
+		set_ready();
+		_value = value;
+		return _value;
+		}
 
-		Cached(CLASS & obj)
-			: Base(false, obj)
-			{}
+	operator const T&() const
+		{
+		return _value;
+		}
 
-		T operator()()
-			{
-			if (called)
-				return value;
-			called = true;
-			return value = object.*FUNC();
-			}
-		};
+	T& get() 
+		{
+		return _value;
+		}
 	};
 
 
 template<class ITER>
 struct pair_iter : public std::pair<ITER, ITER>
 	{
-	typedef ITER::value_type single_v_type;
+	typedef typename ITER::value_type single_v_type;
 	typedef std::pair<single_v_type *, single_v_type *> reference;
 
 	pair_iter(const ITER & i1, const ITER & i2)
-		: pair(i1, i2)
+		: std::pair<ITER, ITER>(i1, i2)
 		{}
 
 	pair_iter & operator++()

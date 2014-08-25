@@ -13,6 +13,7 @@ using namespace std;
 void write_ABCstat_header(ostream & file, 
 	const vector<bool> & pops, const vector<vector<bool> > & pairs, 
 	const vector<string> & ss_names, const vector<string> & ps_names,
+	const vector<string> & gs_names, const vector<vector<size_t> > & gs_groups,
 	bool writeAggr);
 
 

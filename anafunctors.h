@@ -1,44 +1,46 @@
 #ifndef ANAFUNCTORS_H
 #define ANAFUNCTORS_H
 
+#include <cmath>
 
 template<class SAMPLE>
 struct AnalysisBase
 	{
+	typedef SAMPLE sample_t;
+
 	virtual double analyse(const SAMPLE & s) const = 0;
-	double operator()(const SAMPLE & s) const = 0
+	double operator()(const SAMPLE & s) const 
 		{ return this->analyse(s); }
 	};
 
-template<class SAMPLE, class STAT>
-class Analysis : public AnalysisBase
+template<class SAMPLE, class T>
+struct AnalysisWrapper
 	{
-protected:
-	STAT SAMPLE::* _stat_p;
+	typedef SAMPLE sample_t;
 
-public:
-	Analysis(STAT SAMPLE::* stat_p)
-		: _stat_p(stat_p)
-		{}
+	typedef T (sample_t::* func_t)() const;
 
-	double analyse(const SAMPLE & s) const
+	template<func_t FUNC>
+	struct Analysis : public AnalysisBase<SAMPLE>
 		{
-		return (s.*stat_p)();
+		double analyse(const SAMPLE & s) const
+			{
+			return (s.*FUNC)();
+			}
+		};
+
+	template<func_t FUNC>
+	static AnalysisBase<SAMPLE> * create()
+		{
+		return new Analysis<FUNC>();
 		}
 	};
-
-template<class SAMPLE, class STAT>
-Analysis<SAMPLE, STAT> * create_analysis(STAT SAMPLE::* stat_p)
-	{
-	return new Analysis<SAMPLE, STAT>(stat_p);
-	}
-
 
 struct Aggregate
 	{
 protected:
-	double _mean, _sqr_sum, _std;
 	size_t _n;
+	double _mean, _sqr_sum, _std;
 
 public:
 	Aggregate()
@@ -57,13 +59,13 @@ public:
 
 	void analyse()
 		{
-		if (n<2)
+		if (_n<2)
 			return;
 		
-		const double ssq = _sqr_sum - _mean*_mean/n;
-		_std = sqrt(ssq / n-1);
+		const double ssq = _sqr_sum - _mean*_mean/_n;
+		_std = sqrt(ssq / (_n-1));
 
-		_mean /= n;
+		_mean /= _n;
 		}
 
 	double mean() const

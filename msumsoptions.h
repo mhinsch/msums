@@ -1,24 +1,28 @@
 #ifndef MSUMSOPTIONS_H
 #define MSUMSOPTIONS_H
 
+#include <string>
+
+#include "sputil.h"
+
 #include "options.h"
 
 class MSUMSOptions
 	{
 public:
-	string inputfilename = "spinput.txt";
-	string statfilename = "ABCstat.txt";
-	bool printPerLocus = false;
+	string inputfilename;
+	string statfilename;
+	bool printPerLocus;
 
 	typedef OpList::Collector OLIter;
 
-	OpList popList, statList, multiStatList;
+	OpList popList, statList, groupStatList;
 
 private:
 	bool printHelp;
 	bool listStats;
 	
-	OLIter keepS, dropS, keepP, dropP, multiSt;
+	OLIter keepS, dropS, keepP, dropP, groupSt;
 
 	OptionParser p;
 	UnaryOption<string> o_ifn;
@@ -38,20 +42,20 @@ public:
 		printPerLocus(false), printHelp(false), listStats(false),
 		keepS(statList, "+"), dropS(statList, "-"), 
 		keepP(popList, "+"), dropP(popList, "-"),
-		multiSt(multiStatList, ""), 
+		groupSt(groupStatList, ""), 
 		o_ifn(p, 'i', "init", inputfilename), o_sfn(p, 'o', "output", statfilename),
 		o_ppl(p, 'l', "print_per_locus", printPerLocus),
 		o_hlp(p, 'h', "help", printHelp),
 		o_list(p, 'a', "list_stats", listStats),
 		o_ds(p, 's', "dropStats", dropS), o_ks(p, 'S', "keepStats", keepS),
 		o_dp(p, 'p', "dropPops", dropP), o_kp(p, 'P', "keepPops", keepP),
-		o_ms(p, 'm', "multiStats", multiSt)
+		o_ms(p, 'm', "multiStats", groupSt)
 		{}
 
 	void do_print_help();
 	void do_list_stats();
 
-	void parse(int argc, char * argv[])
+	void process(int argc, char * argv[])
 		{
 		try {
 		p.parse(argv+1, argc-1);
@@ -69,7 +73,7 @@ public:
 
 		if (listStats)
 			{
-			do_print_stats();
+			do_list_stats();
 			exit(0);
 			}
 		}

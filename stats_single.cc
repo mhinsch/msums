@@ -1,4 +1,4 @@
-#include "stats.h"
+#include "stats_single.h"
 
 
 Harmonic harmonic;

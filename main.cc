@@ -13,6 +13,7 @@
 #include "msumsoptions.h"
 #include "runanalysis.h"
 #include "configfile.h"
+#include "msdatafile.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ void select_stats(const vector<vector<string> > & sel,
 void select_pops(const vector<vector<string> > & sel,
 	vector<bool> & pops, vector<vector<bool> > & pairs);
 void create_group_stats(
-	const vector<vector<string> > & sel, gs_handler_t & gsh)
+	const vector<vector<string> > & sel, gs_handler_t & gsh);
 
 
 
@@ -32,14 +33,14 @@ int main(int argc,char *argv[])
 	{
 	MSUMSOptions opt;
 
-	opt.parse(argc, argv);
+	opt.process(argc, argv);
 
 
 // **** read config file
 
-	ifstream inp(opt.inputfile.c_str());
+	ifstream inp(opt.inputfilename.c_str());
 	if (!inp.good())
-		error("Error in main: cannot open config file " + opt.inputfile);
+		error("Error in main: cannot open config file " + opt.inputfilename);
 
 	ConfigFile conf;
 	try {
@@ -56,7 +57,7 @@ int main(int argc,char *argv[])
 
 	vector<bool> show_pops(conf.n_pops(), true);
 	vector<vector<bool> > show_pairs;
-	for (int p=0; p<conf.n_pops(); p++)
+	for (size_t p=0; p<conf.n_pops(); p++)
 		show_pairs.push_back(vector<bool>(conf.n_pops(), true));
 	// process command line selection of pops/pairs
 	select_pops(opt.popList.getList(), show_pops, show_pairs);
@@ -136,9 +137,9 @@ int main(int argc,char *argv[])
 // **** start reading datasets and calculating
 // **** dataset = replicate, i.e. 1 dataset = loci x pops x samples
 
-	for(int dataset=0; dataset<conf.n_datasets(); ++dataset) 
+	for(size_t dataset=0; dataset<conf.n_datasets(); ++dataset) 
 		{ 
-		const int imain = n_datasets/100;
+		const int imain = conf.n_datasets()/100;
 		if (imain>0 && (dataset % imain)==0) 
 			{
 			string t_str;

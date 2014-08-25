@@ -1,7 +1,7 @@
 
 PROF =
 WARN = -Wall -Wextra -Wuninitialized -Wlogical-op 
-DFLAGS = -g -DS_DEBUG -ftrapv
+DFLAGS = -g -DS_DEBUG 
 OFLAGS = 
 CFLAGS = $(WARN) $(DFLAGS) $(OFLAGS) $(PROF) -pipe 
 IFLAGS =
@@ -12,7 +12,7 @@ DEP_SRC = *.cc
 
 SOURCE = *.cc *.h
 
-OBJECTS = main.o configfile.o msdatafile.o msumsoptions.o runanalysis.o statheader.o stats_single.o
+OBJECTS = main.o configfile.o msdatafile.o msumsoptions.o runanalysis.o statheader.o stats_single.o setup.o
 
 TARGET = msums
 DIRECTORY = msums

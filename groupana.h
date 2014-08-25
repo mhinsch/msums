@@ -7,12 +7,12 @@
 template<class SAMPLEV>
 struct PatF3 : public AnalysisBase<SAMPLEV>
 	{
-	double analyse(const SAMPLEV & samples)
+	double analyse(const SAMPLEV & samples) const
 		{
 		return patterson_f3(
-			samples[0].alleles().begin(), samples[0].alleles().end(),
-			samples[1].alleles().begin(), samples[1].alleles().end(),
-			samples[2].alleles().begin(), samples[2].alleles().end());
+			samples[0]->alleles().begin(), samples[0]->alleles().end(),
+			samples[1]->alleles().begin(), samples[1]->alleles().end(),
+			samples[2]->alleles().begin(), samples[2]->alleles().end());
 		}
 	};
 
@@ -20,13 +20,13 @@ struct PatF3 : public AnalysisBase<SAMPLEV>
 template<class SAMPLEV>
 struct PatF4 : public AnalysisBase<SAMPLEV>
 	{
-	double analyse(const SAMPLEV & samples)
+	double analyse(const SAMPLEV & samples) const
 		{
 		return patterson_f4(
-			samples[0].alleles().begin(), samples[0].alleles().end(),
-			samples[1].alleles().begin(), samples[1].alleles().end(),
-			samples[2].alleles().begin(), samples[2].alleles().end(),
-			samples[3].alleles().begin(), samples[3].alleles().end());
+			samples[0]->alleles().begin(), samples[0]->alleles().end(),
+			samples[1]->alleles().begin(), samples[1]->alleles().end(),
+			samples[2]->alleles().begin(), samples[2]->alleles().end(),
+			samples[3]->alleles().begin(), samples[3]->alleles().end());
 		}
 	};
 

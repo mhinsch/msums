@@ -1,6 +1,7 @@
 #ifndef ALLELESET_H
 #define ALLELESET_H
 
+#include <vector>
 
 // Default implementation for AlleleSet. Note that this will become rather
 // inefficient for larger alphabets (e.g. microsatellites).
@@ -12,12 +13,18 @@ public:
 
 protected:
 	int _n_alleles;
-	vector<int> _count;
+	std::vector<int> _count;
 
 public:
+	AlleleSet()
+		: _n_alleles(0), _count(0)
+		{}
+
 	void add(const state_t & a)
 		{
-		_count.resize(a, 0);
+//		cerr << "ADD " << a << ";";
+		if (_count.size() <= size_t(a))
+			_count.resize(size_t(a)+1, 0);
 		_count[a]++;
 		}
 
@@ -64,6 +71,18 @@ public:
 		for (size_t i=0; i<_count.size(); i++)
 			if (_count[i] != 0)
 				_n_alleles++;
+
+		//cout << "na: " << _n_alleles << endl;
+		}
+
+	int product(const AlleleSet<STATE> & o) const
+		{
+		int p = 0;
+
+		for (size_t i=0; i<_count.size() && i<o._count.size(); i++)
+			p += _count[i] * o._count[i];
+		
+		return p;
 		}
 
 	int pairwise_difference() const
@@ -73,7 +92,9 @@ public:
 		for (size_t i=0; (i+1)<_count.size(); i++)
 			for (size_t j=i+1; j<_count.size(); j++)
 				diff += _count[i] * _count[j];
-		
+
+		//cerr << "diff: " << diff << endl;		
+
 		return diff;
 		}
 
