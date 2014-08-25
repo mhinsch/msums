@@ -39,6 +39,7 @@ public:
 		return _count[a];
 		}
 
+	// find first allele with count>0
 	state_t find(size_t start = 0) const
 		{
 		for (size_t i=start; i<_count.size(); i++)

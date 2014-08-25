@@ -47,7 +47,7 @@ struct PolyL
 		{
 		typedef typename std::iterator_traits<SEQ_ITER>::value_type state_type;
 		/*vector of runs of fixed and polymorphic sites according to Miguel Navascues*/
-		std::vector<state_type> Walds;
+		std::vector<char> Walds;
 
 		SEQ_ITER s_out = start_out;
 
@@ -65,14 +65,13 @@ struct PolyL
 				continue;	/*skip to next site*/
 				}
 
-			// only fixed or biallelic arrives here
+		// only fixed or biallelic arrives here
 
 			const state_type outgroup = *s_out;
 
 			// now test whether multiple hits and if not 
 			// determine the type of polymorphism
 			const int code = n_all1 + n_all2*2;
-
 
 			// should be checked, but we know they have to be valid
 			state_type s1_0 = s1->find();
@@ -100,8 +99,8 @@ struct PolyL
 					sfout++;
 				else	// exactly one of a,b identical to outgroup
 					{	
-					//Walds[s] = true;
-					 s1_0 == outgroup ?
+					Walds[s] = 1;
+					s1_0 == outgroup ?
 						sfB++ :	// base in B is derived
 						sfA++; 	// base in A is derived
 					}
@@ -111,7 +110,7 @@ struct PolyL
 				if ( (s2_0==s1_0 || s2_0==s1_1) &&
 					(outgroup==s2_0 || outgroup==s1_0 || outgroup==s1_1) ) 
 					{	/* fixed in B for one of the two bases in A*/
-					//Walds[s] = false;
+					Walds[s] = 0;
 					bialsites++;
 
 					if (outgroup == s2_0) 	/*unique derived polymorphism in A*/
