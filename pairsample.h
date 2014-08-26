@@ -116,9 +116,6 @@ public:
 	int ss() const
 		{ return poly_l().ss; }
 
-	double wald() const
-		{ return poly_l().wald; }
-
 	const pair<int, int> & navascues_R() const
 		{
 		return CACHED_OR_COMPUTE(_navascues_R, ::navascues_R(

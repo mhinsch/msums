@@ -39,7 +39,6 @@ PSHandler::PSHandler()
 	add("sxAfB", SI::create<&sample_t::sxAfB>());
 	add("sxBfA", SI::create<&sample_t::sxBfA>());
 	add("ss", SI::create<&sample_t::ss>());
-	add("Wald", SD::create<&sample_t::wald>());
 	add("Rf", SI::create<&sample_t::Rf>());
 	add("Rs", SI::create<&sample_t::Rs>());
 	add("Wx2s1", SD::create<&sample_t::Wx2s1>());

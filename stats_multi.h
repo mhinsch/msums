@@ -45,8 +45,6 @@ struct PolyL
 		const SEQ_ITER & start_out, const SEQ_ITER & stop_out)
 		{
 		typedef typename std::iterator_traits<SEQ_ITER>::value_type state_type;
-		/*vector of runs of fixed and polymorphic sites according to Miguel Navascues*/
-		//std::vector<char> Walds;
 
 		const bool has_outgroup = start_out != stop_out;
 		SEQ_ITER s_out = start_out;
