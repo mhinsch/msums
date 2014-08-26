@@ -37,7 +37,6 @@ struct PolyL
 	int bialsites, multisites, sfout, sfA;
 	int sfB, sxA, sxB, sxAfB, sxBfA;
 	int ss;
-	double wald;
 
 	template<class SET_ITER, class SEQ_ITER>
 	void compute(
@@ -99,19 +98,15 @@ struct PolyL
 					// both derived
 					sfout++;
 				else	// exactly one of a,b identical to outgroup
-					{	
-					//Walds[s] = 1;
 					s1_0 == outgroup ?
 						sfB++ :	// base in B is derived
 						sfA++; 	// base in A is derived
-					}
 
 				continue;
 			case 4: // a==2, b==1
 				if ( (s2_0==s1_0 || s2_0==s1_1) &&
 					(outgroup==s2_0 || outgroup==s1_0 || outgroup==s1_1) ) 
 					{	/* fixed in B for one of the two bases in A*/
-					//Walds[s] = 0;
 					bialsites++;
 
 					if (outgroup == s2_0) 	/*unique derived polymorphism in A*/
@@ -127,7 +122,6 @@ struct PolyL
 				if ( (s1_0==s2_0 || s1_0==s2_1) &&
 					(outgroup==s1_0 || outgroup==s2_0 || outgroup==s2_1) )
 					{
-					//Walds[s] = false;
 					bialsites++;
 
 					if (outgroup == s1_0)	// unique derived polymorphism in B
@@ -147,7 +141,6 @@ struct PolyL
 					(outgroup==s1_0 || outgroup==s1_1)  )
 					{
 					ss++;
-					//Walds[s] = false;
 					bialsites++;
 					continue;
 					} 
@@ -169,8 +162,6 @@ struct PolyL
 			sxA += sxAfB;
 			sxB += sxBfA;
 			}
-
-		//wald = (double) WaldWolfowitz(Walds.begin(), Walds.end(), 0);
 		}	/*end of compute_polyl*/
 	};
 
@@ -315,49 +306,6 @@ std::pair<int, int> navascues_R(
 	return std::pair<int, int>(count_rf, count_rs);
 	}
 
-
-/*From Miguel Navascues*/
-// calculation of p-values has been removed
-
-// Function to calculate number of runs or its standardize (i.e. normalized) value
-// @stats which statistic should be returned: 0=number of runs; 1=standardize number of runs
-//        with any other value the number of runs is returned
-//        (note that the number of runs is an integer but will be returned as a double)
-// **CURRENTLY ASSUMES 0/1 DATA!**
-template<class SEQ_ITER>
-double WaldWolfowitz(const SEQ_ITER & start, const SEQ_ITER & stop, int stats)
-	{
-	int runs = 1;
-	int n0 = 0, n1 = 0;
-	SEQ_ITER prev = start;
-
-	int size = 0;
-
-	for (SEQ_ITER s=start; s!=stop; s++)
-		{
-		*s ? n1++ : n0++;
-		
-		if (s!=start && *s!=*prev) 
-			runs++;
-
-		prev = s;
-		size++;
-		}
-
-	if (n0<5 || n1<5) 
-		return -9;
-	
-	if (stats==1)
-		{
-		const double mean = 1.0 + 
-			( (double(n0) * double(n1) * 2.0) / double(size));
-		const double variance = 
-			( (mean-1) * (mean-2) ) / (double(size-1));
-		return ( double(runs) - mean ) / sqrt(variance);
-		}		
-	else
-		return runs;
-	}
 
 template<class SET_ITER>
 double patterson_D(
