@@ -47,8 +47,9 @@ struct PolyL
 		{
 		typedef typename std::iterator_traits<SEQ_ITER>::value_type state_type;
 		/*vector of runs of fixed and polymorphic sites according to Miguel Navascues*/
-		std::vector<char> Walds;
+		//std::vector<char> Walds;
 
+		const bool has_outgroup = start_out != stop_out;
 		SEQ_ITER s_out = start_out;
 
 		// go through all sites
@@ -99,7 +100,7 @@ struct PolyL
 					sfout++;
 				else	// exactly one of a,b identical to outgroup
 					{	
-					Walds[s] = 1;
+					//Walds[s] = 1;
 					s1_0 == outgroup ?
 						sfB++ :	// base in B is derived
 						sfA++; 	// base in A is derived
@@ -110,7 +111,7 @@ struct PolyL
 				if ( (s2_0==s1_0 || s2_0==s1_1) &&
 					(outgroup==s2_0 || outgroup==s1_0 || outgroup==s1_1) ) 
 					{	/* fixed in B for one of the two bases in A*/
-					Walds[s] = 0;
+					//Walds[s] = 0;
 					bialsites++;
 
 					if (outgroup == s2_0) 	/*unique derived polymorphism in A*/
@@ -162,13 +163,13 @@ struct PolyL
 			multisites++;
 			}	/*end loop over sites*/
 
-	/*	if (outgroup)
+		if (has_outgroup)
 			{
 			sfout = sfA + sfB;
 			sxA += sxAfB;
 			sxB += sxBfA;
 			}
-	*/
+
 		//wald = (double) WaldWolfowitz(Walds.begin(), Walds.end(), 0);
 		}	/*end of compute_polyl*/
 	};
