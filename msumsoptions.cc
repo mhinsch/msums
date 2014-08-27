@@ -20,7 +20,7 @@ void MSUMSOptions::do_print_help()
 	"                      [false]\n"
 	"-S, --keepStats LIST  Print stats in LIST. LIST is a space-separated list of\n"
 	"                      stat names. 'all' selects all stats.\n"
-	"-S, --dropStats LIST  Do *not* print stats in LIST (see above).\n"
+	"-s, --dropStats LIST  Do *not* print stats in LIST (see above).\n"
 	"-P, --keepPops LIST   Show populations or pairs in LIST. Populations can be\n"
 	"                      specified as single number (e.g. '2'), or range \n"
 	"                      (e.g. '1-5'). Pairs are specifies as p1xp2 (e.g. '1x2').\n"
