@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "sample.h"
+#include "setup.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ using namespace std;
 void read_dataset(istream & inp, 
 	size_t dataset, 
 	const vector<vector<size_t> > & nSeq, const vector<size_t> & nSites, 
-	vector<vector<Sample<string, char> > > & seqhs, vector<string> & seqOls);
+	vector<vector<StrSample> > & seqhs, vector<Sequence> & seqOls);
 
 
 #endif	// MSDATAFILE_H

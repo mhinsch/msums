@@ -2,11 +2,11 @@
 
 
 void analyse(ostream & abcstatfile, int dataset, 
-	vector<vector<single_ana_t::sample_t> > & sequences,
+	vector<vector<SingleStats::sample_t> > & sequences,
 	const vector<bool> & show_pops, const vector<vector<bool> > & show_pairs,
-	const vector<single_ana_t*> & single_stats,
-	const vector<pair_ana_t*> & pair_stats,
-	const vector<group_ana_t*> & group_stats,
+	const vector<SingleStats*> & single_stats,
+	const vector<PairStats*> & pair_stats,
+	const vector<GroupStats*> & group_stats,
 	const vector<vector<size_t> > & groups)
 	{
 	const size_t n_loci = sequences[0].size();
@@ -38,15 +38,15 @@ void analyse(ostream & abcstatfile, int dataset,
 				sequences[pop1][l].prepare_alleles_per_site();
 				sequences[pop2][l].prepare_alleles_per_site();
 
-				const single_ana_t::sample_t p1 = sequences[pop1][l];
-				const single_ana_t::sample_t p2 = sequences[pop2][l];
+				const SingleStats::sample_t p1 = sequences[pop1][l];
+				const SingleStats::sample_t p2 = sequences[pop2][l];
 
-				const pair_ana_t::sample_t ps(p1, p2);
+				const PairStats::sample_t ps(p1, p2);
 				for (size_t stat=0; stat<pair_stats.size(); stat++)
 					abcstatfile << '\t' << pair_stats[stat]->analyse(ps);
 				}
 
-		group_ana_t::sample_t group;
+		GroupStats::sample_t group;
 		for (size_t stat=0; stat<group_stats.size(); stat++)
 			{
 			group.clear();
@@ -60,11 +60,11 @@ void analyse(ostream & abcstatfile, int dataset,
 
 
 void analyse_aggr(ostream & abcstatfile, int dataset,
-	vector<vector<single_ana_t::sample_t> > & sequences,
+	vector<vector<SingleStats::sample_t> > & sequences,
 	const vector<bool> & show_pops, const vector<vector<bool> > & show_pairs,
-	const vector<single_ana_t*> & single_stats,
-	const vector<pair_ana_t*> & pair_stats,
-	const vector<group_ana_t*> & group_stats,
+	const vector<SingleStats*> & single_stats,
+	const vector<PairStats*> & pair_stats,
+	const vector<GroupStats*> & group_stats,
 	const vector<vector<size_t> > & groups)
 	{
 	const size_t n_pops = sequences.size();
@@ -97,8 +97,8 @@ void analyse_aggr(ostream & abcstatfile, int dataset,
 			if (!show_pairs[pop1][pop2])
 				continue;
 
-			vector<single_ana_t::sample_t> & p1 = sequences[pop1];
-			vector<single_ana_t::sample_t> & p2 = sequences[pop2];
+			vector<SingleStats::sample_t> & p1 = sequences[pop1];
+			vector<SingleStats::sample_t> & p2 = sequences[pop2];
 
 			aggregates.clear();
 			aggregates.resize(pair_stats.size());
@@ -108,7 +108,7 @@ void analyse_aggr(ostream & abcstatfile, int dataset,
 				p1[l].prepare_alleles_per_site();
 				p2[l].prepare_alleles_per_site();
 				// PairSample caches analysis results
-				const pair_ana_t::sample_t ps(p1[l], p2[l]);
+				const PairStats::sample_t ps(p1[l], p2[l]);
 				for (size_t stat=0; stat<pair_stats.size(); stat++)
 					aggregates[stat](pair_stats[stat]->analyse(ps));
 				}
@@ -121,12 +121,12 @@ void analyse_aggr(ostream & abcstatfile, int dataset,
 				}
 			}
 
-	group_ana_t::sample_t group;
+	GroupStats::sample_t group;
 	for (size_t stat=0; stat<group_stats.size(); stat++)
 		{
 		Aggregate aggregate;
 		const vector<size_t> cur_group = groups[stat];
-		const group_ana_t & ana = *group_stats[stat];
+		const GroupStats & ana = *group_stats[stat];
 
 		for (size_t l=0; l<sequences[0].size(); l++)
 			{

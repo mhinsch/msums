@@ -73,16 +73,20 @@ public:
 	};
 
 
-typedef Sample<string, char> StrSample;
-typedef PairSample<string, char> PairStrSample;
+typedef vector<int> Sequence;
+typedef Sample<Sequence> StrSample;
+typedef PairSample<Sequence> PairStrSample;
+typedef AnalysisBase<StrSample> SingleStats;
+typedef AnalysisBase<PairStrSample> PairStats;
+typedef AnalysisBase<vector<StrSample*> > GroupStats;
 
-class SSHandler : public AnalysisHandler<AnalysisBase<StrSample > >
+class SSHandler : public AnalysisHandler<SingleStats>
 	{
 public:
 	SSHandler();
 	};
 
-class PSHandler : public AnalysisHandler<AnalysisBase<PairStrSample > >
+class PSHandler : public AnalysisHandler<PairStats>
 	{
 public:
 	PSHandler();

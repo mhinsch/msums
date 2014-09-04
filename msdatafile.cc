@@ -20,7 +20,7 @@ typedef SPIOException SPIOE;
 	*/
 void read_dataset(istream & inp, size_t dataset, 
 	const vector<vector<size_t> > & n_sequences, const vector<size_t> & n_sites, 
-	vector<vector<Sample<string, char> > > & sequences, vector<string> & outgroup)
+	vector<vector<StrSample> > & sequences, vector<Sequence> & outgroups)
 	{
 	size_t nseg;
 
@@ -81,11 +81,11 @@ void read_dataset(istream & inp, size_t dataset,
 			// all sequences of population p
 			for (size_t h=0; h<n_sequences[p][l]; h++) 
 				{	
-				string & seq = sequences[p][l].sequence(h);
-				seq.reserve(nseg);
+				string str("");
+				str.reserve(nseg);
 
 				// careful, this is two things in one
-				if (nseg>0 && !getline(inp, seq))
+				if (nseg>0 && !getline(inp, str))
 					throw SPIOE(
 						string(ERR_LOC 
 							" error in reading dataset: cannot read seq of "
@@ -94,13 +94,17 @@ void read_dataset(istream & inp, size_t dataset,
 						lexical_cast<string>(p) + " at locus " +
 						lexical_cast<string>(l));
 
+				Sequence & seq = sequences[p][l].sequence(h);
+				seq.clear(); seq.reserve(nseg);
+				for (size_t i=0; i<str.size(); i++)
+					seq.push_back(int(str[i]) - int('0'));
 				// we don't do this anymore
 				// seq.resize(n_sites[l], '0');
 				}
 			}	/* end loop over haplotypes in population A*/
 			
-		outgroup[l].clear();
-		outgroup[l].resize(nseg, '0');
+		outgroups[l].clear();
+		outgroups[l].resize(nseg, 0);
 		}	/*end loop over loci*/
 	}		 /*end of get_dataset*/
 

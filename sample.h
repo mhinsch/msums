@@ -13,13 +13,13 @@ using namespace std;
 
 #define CACHED_OR_COMPUTE(name, calc) ( name.ready()?name:name(calc))
 
-template<class SEQ, class STATE>
+template<class SEQ>
 class Sample
 	{
 public:
 	typedef SEQ sequence_t;
 	typedef typename SEQ::value_type state_t;
-	typedef AlleleSet<STATE> allele_set;
+	typedef AlleleSet<state_t> allele_set;
 
 protected:
 	// list of haplotypes in the sample

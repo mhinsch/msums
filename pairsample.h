@@ -6,15 +6,14 @@
 #include "sample.h"
 #include "stats_multi.h"
 
-template<class SEQ, class STATE>
+template<class SEQ>
 class PairSample
 	{
 public:
-	typedef Sample<SEQ, STATE> sample_t;
+	typedef Sample<SEQ> sample_t;
 
 protected:
 	const sample_t & _p1, & _p2;
-	const SEQ _out;
 
 	mutable CachedValue<int> _spd;
 	mutable CachedValue<double> _fst;
@@ -78,8 +77,7 @@ public:
 			{
 			_poly_l.get().compute(
 				_p1.alleles().begin(), _p1.alleles().end(),
-				_p2.alleles().begin(), _p2.alleles().end(),
-				_out.begin(), _out.end());
+				_p2.alleles().begin(), _p2.alleles().end());
 			_poly_l.set_ready();
 			}
 

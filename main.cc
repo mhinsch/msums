@@ -81,8 +81,8 @@ int main(int argc,char *argv[])
 	ss_handler.activate(selected_stats);
 	ps_handler.activate(selected_stats);
 
-	const vector<SSHandler::analysis_t*> & single_stats = ss_handler.active();
-	const vector<PSHandler::analysis_t*> & pair_stats = ps_handler.active();	
+	const vector<SingleStats*> & single_stats = ss_handler.active();
+	const vector<PairStats*> & pair_stats = ps_handler.active();	
 
 	gs_handler_t gs_handler;
 	create_group_stats(opt.groupStatList.getList(), gs_handler);
@@ -120,13 +120,13 @@ int main(int argc,char *argv[])
 		sequences[p].resize(conf.n_loci(), StrSample());
 		for (size_t l=0; l<sequences[p].size(); l++)
 			{
-			sequences[p][l].resize(conf.n_sequences()[p][l], "");
+			sequences[p][l].resize(conf.n_sequences()[p][l], Sequence());
 			maxNSeq = max(maxNSeq, conf.n_sequences()[p][l]);
 			}
 		}
 
 	/** Outgroup data. */
-	vector<string> outgroup(conf.n_loci(), "");
+	vector<Sequence> outgroup(conf.n_loci(), Sequence());
 	
 	ifstream input(conf.datafilename().c_str());
 	if (!input.good())

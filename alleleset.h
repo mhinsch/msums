@@ -20,23 +20,35 @@ public:
 		: _n_alleles(0), _count(0)
 		{}
 
+	size_t s2i(const state_t & a) const
+		{
+		return a;
+		}
+
+	state_t i2s(size_t i) const
+		{
+		return i;
+		}
+
 	void add(const state_t & a)
 		{
 //		cerr << "ADD " << a << ";";
-		if (_count.size() <= size_t(a))
-			_count.resize(size_t(a)+1, 0);
-		_count[a]++;
+		const size_t i = s2i(a);
+		if (_count.size() <= i)
+			_count.resize(i+1, 0);
+		_count[i]++;
 		}
 
 	int count(const state_t & a) const
 		{
-		return _count.size() > a ? _count[a] : 0;
+		const size_t i = s2i(a);
+		return _count.size() > i ? _count[i] : 0;
 		}
 
 	// unsafe version
 	int operator[](const state_t & a) const
 		{
-		return _count[a];
+		return _count[s2i(a)];
 		}
 
 	// find first allele with count>0
@@ -44,9 +56,9 @@ public:
 		{
 		for (size_t i=start; i<_count.size(); i++)
 			if (_count[i] != 0)
-				return state_t(i);
+				return i2s(i);
 		
-		return state_t(_count.size());
+		return i2s(_count.size());
 		}
 
 	size_t size() const

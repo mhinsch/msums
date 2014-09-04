@@ -38,24 +38,28 @@ struct PolyL
 	int sfB, sxA, sxB, sxAfB, sxBfA;
 	int ss;
 
-	template<class SET_ITER, class SEQ_ITER>
+	PolyL()
+		: bialsites(0), multisites(0), sfout(0), sfA(0), sfB(0), sxA(0), sxB(0),
+		  sxAfB(0), sxBfA(0), ss(0)
+	{}
+
+	template<class SET_ITER>
 	void compute(
 		const SET_ITER & start1, const SET_ITER & stop1, 
-		const SET_ITER & start2, const SET_ITER & stop2, 
-		const SEQ_ITER & start_out, const SEQ_ITER & stop_out)
+		const SET_ITER & start2, const SET_ITER & stop2)
 		{
-		typedef typename std::iterator_traits<SEQ_ITER>::value_type state_type;
+		typedef typename std::iterator_traits<SET_ITER>::value_type::state_t state_type;
 
-		const bool has_outgroup = start_out != stop_out;
-		SEQ_ITER s_out = start_out;
+		const bool has_outgroup = true;
 
 		// go through all sites
 		for (SET_ITER s1=start1, s2=start2; 
 			s1!=stop1 && s2!=stop2; 
-			s1++, s2++, s_out++) 
+			s1++, s2++) 
 			{
 			const int n_all1 = s1->n_alleles();
 			const int n_all2 = s2->n_alleles();
+			// cout << "NA: " << n_all1 << " " << n_all2 << "\n";
 
 			if (n_all1 > 2 || n_all2 > 2) 
 				{	/*multiple hits*/
@@ -65,64 +69,72 @@ struct PolyL
 
 		// only fixed or biallelic arrives here
 
-			const state_type outgroup = *s_out;
+			// hard-coded for now
+			const state_type outgroup = 0;
 
 			// now test whether multiple hits and if not 
 			// determine the type of polymorphism
 			const int code = n_all1 + n_all2*2;
 
 			// should be checked, but we know they have to be valid
-			state_type s1_0 = s1->find();
-			state_type s2_0 = s2->find();
+			const state_type sA_0 = s1->find();
+			const state_type sB_0 = s2->find();
 			// these might return invalid, but switch over code will take 
 			// care of that
-			state_type s1_1 = s1->find(s1_0+1);
-			state_type s2_1 = s2->find(s2_0+1);
+			const state_type sA_1 = s1->find(sA_0+1);
+			const state_type sB_1 = s2->find(sB_0+1);
+			// cout << "s: " << code << " (" << n_all1 << " " << n_all2 << "); " << sA_0 << " " << sA_1 << ", " << sB_0 << " " << sB_1 << ", " << outgroup << "\n";
 
 			switch (code)
 				{
 			case 3:	// a==1, b==1
 				// all identical
-				if (s1_0==s2_0 && s1_0==outgroup)
+				if (sA_0==sB_0 && sA_0==outgroup)
 					continue;
+				// cout << ".";
 				// all different => multiallelic
-				if (s1_0!=s2_0 && s1_0!=outgroup && s2_0!=outgroup)
+				if (sA_0!=sB_0 && sA_0!=outgroup && sB_0!=outgroup)
 					break;
 				// from here on 2 alleles
-				
+			
+				// cout << "~";	
 				bialsites++;
 
-				if (s1_0 == s2_0)
+				if (sA_0 == sB_0)
 					// both derived
 					sfout++;
 				else	// exactly one of a,b identical to outgroup
-					s1_0 == outgroup ?
+					sA_0 == outgroup ?
 						sfB++ :	// base in B is derived
 						sfA++; 	// base in A is derived
 
 				continue;
+				// cout << "!!";	
 			case 4: // a==2, b==1
-				if ( (s2_0==s1_0 || s2_0==s1_1) &&
-					(outgroup==s2_0 || outgroup==s1_0 || outgroup==s1_1) ) 
+				if ( (sB_0==sA_0 || sB_0==sA_1) &&
+					(outgroup==sB_0 || outgroup==sA_0 || outgroup==sA_1) ) 
 					{	/* fixed in B for one of the two bases in A*/
 					bialsites++;
 
-					if (outgroup == s2_0) 	/*unique derived polymorphism in A*/
+					// cout << "+";
+
+					if (outgroup == sB_0) 	/*unique derived polymorphism in A*/
 						sxA++;
 					else					/*unique ancestral polymorphism in A*/
 						sxAfB++;
 
 					continue;
 					} 
+				// cout << "-";
 				break;
 			case 5: // a==1, b==2
 				// fixed in A for one out of B and one of them equal to outgroup
-				if ( (s1_0==s2_0 || s1_0==s2_1) &&
-					(outgroup==s1_0 || outgroup==s2_0 || outgroup==s2_1) )
+				if ( (sA_0==sB_0 || sA_0==sB_1) &&
+					(outgroup==sA_0 || outgroup==sB_0 || outgroup==sB_1) )
 					{
 					bialsites++;
 
-					if (outgroup == s1_0)	// unique derived polymorphism in B
+					if (outgroup == sA_0)	// unique derived polymorphism in B
 						sxB++;
 					else 					// unique ancestral polymorphism in B
 						sxBfA++;
@@ -134,9 +146,9 @@ struct PolyL
 				break;
 			case 6:	// a==2, b==2
 				// shared polymorphism and outgroup present
-				if (  ( (s1_0==s2_0 && s1_1==s2_1) ||
-						(s1_0==s2_1 && s1_1==s2_0) )  &&
-					(outgroup==s1_0 || outgroup==s1_1)  )
+				if (  ( (sA_0==sB_0 && sA_1==sB_1) ||
+						(sA_0==sB_1 && sA_1==sB_0) )  &&
+					(outgroup==sA_0 || outgroup==sA_1)  )
 					{
 					ss++;
 					bialsites++;
@@ -154,6 +166,7 @@ struct PolyL
 			multisites++;
 			}	/*end loop over sites*/
 
+		// cout << "S" << ss << " " << multisites << "\n";
 		if (has_outgroup)
 			{
 			sfout = sfA + sfB;
@@ -217,6 +230,9 @@ std::pair<double, double> navascues_W_01(
 			runl2 = 0;
 			}
 		}
+
+	if (n_poly <= 2)
+		return std::pair<double, double>(0, 0);
 
 	runs1.push_back(runl1);
 	runs2.push_back(runl2);
@@ -287,7 +303,7 @@ std::pair<int, int> navascues_R(
 		c = classify(*s1, *s2);
 		if (c==1) continue;
 
-		std::cout << (c==0);
+		//std::cout << (c==0);
 		if ((c == 0) != rf)	// rf state changes => new run
 			{
 			count_rf++;
