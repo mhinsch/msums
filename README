@@ -10,3 +10,8 @@ git push
 
 instead of
 git push origin master
+==> OK didn't work, had to use:
+git push --set-upstream origin master
+
+Now check again it that works by just:
+git push
