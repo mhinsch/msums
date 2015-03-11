@@ -14,6 +14,7 @@
 #include "runanalysis.h"
 #include "configfile.h"
 #include "msdatafile.h"
+#include "maskfile.h"
 
 using namespace std;
 
@@ -50,6 +51,25 @@ int main(int argc,char *argv[])
 	conf.dump(cout);
 
 
+// **** read mask file (if requested)
+
+	vector<vector<bool> > mask;
+	if (opt.maskfilename != "")
+		{
+		ifstream m_inp(opt.maskfilename.c_str());
+		if (!m_inp.good())
+			error("Error in main: cannot open mask file " + opt.maskfilename);
+
+			try {
+		read_mask(m_inp, mask);
+			} catch (exception & e) {error(e.what());}
+
+		for (size_t m=0; m<mask.size(); m++)
+			if (mask[m].size() != conf.n_sites()[m])
+				error("Error in main: mask does not match config file");
+
+		cout << "read masks for " << mask.size() << " loci\n";
+		}
 
 // **** now we know #pops we can process command line arguments
 
@@ -154,7 +174,7 @@ int main(int argc,char *argv[])
 
 		try {
 		read_dataset(input, dataset, 
-			conf.n_sequences(), conf.n_sites(), sequences, outgroup);
+			conf.n_sequences(), conf.n_sites(), sequences, outgroup, mask);
 		} catch (exception & e)
 			{error(e.what());}
 

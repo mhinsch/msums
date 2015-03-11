@@ -12,6 +12,7 @@ class MSUMSOptions
 public:
 	string inputfilename;
 	string statfilename;
+	string maskfilename;
 	bool printPerLocus;
 
 	typedef OpList::Collector OLIter;
@@ -27,6 +28,7 @@ private:
 	OptionParser p;
 	UnaryOption<string> o_ifn;
 	UnaryOption<string> o_sfn;
+	UnaryOption<string> o_mfn;
 	SwitchOption o_ppl;
 	SwitchOption o_hlp;
 	SwitchOption o_list;
@@ -39,11 +41,13 @@ private:
 public:
 	MSUMSOptions()
 		: inputfilename("spinput.txt"), statfilename("ABCstat.txt"),
+		maskfilename(""),
 		printPerLocus(false), printHelp(false), listStats(false),
 		keepS(statList, "+"), dropS(statList, "-"), 
 		keepP(popList, "+"), dropP(popList, "-"),
 		groupSt(groupStatList, ""), 
 		o_ifn(p, 'i', "init", inputfilename), o_sfn(p, 'o', "output", statfilename),
+		o_mfn(p, 'k', "mask", maskfilename),
 		o_ppl(p, 'l', "print_per_locus", printPerLocus),
 		o_hlp(p, 'h', "help", printHelp),
 		o_list(p, 'a', "list_stats", listStats),

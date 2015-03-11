@@ -17,15 +17,19 @@ typedef SPIOException SPIOE;
 	@param n_sites number of sites[locus].
 	@param sequences sequences[population][locus][number].
 	@param outgroup outgroup data[locus].
+	@param mask missing data bool[locus][site].
 	*/
 void read_dataset(istream & inp, size_t dataset, 
 	const vector<vector<size_t> > & n_sequences, const vector<size_t> & n_sites, 
-	vector<vector<StrSample> > & sequences, vector<Sequence> & outgroups)
+	vector<vector<StrSample> > & sequences, vector<Sequence> & outgroups,
+	const vector<vector<bool> > & mask )
 	{
 	size_t nseg;
 
 	const string match_segsites = "segsites:";
-	const string match_positions = "positions:";
+
+	vector<int> positions;
+
 	string str;
 
 	// this is a bit non-obvious
@@ -72,12 +76,31 @@ void read_dataset(istream & inp, size_t dataset,
 			//	<< " in locus " << l;
 			}
 
-		skip_space(inp, str); // skip blanks
+		skip_space(inp, str); // next non-blank line
+		if (mask.size())	// we need position info
+			{
+			positions.clear();
+			positions.resize(nseg);
+			
+			itmp.clear();
+			itmp.str(str);
+			// throw away first part of line
+			stmp = "";
+			itmp >> stmp;
+
+			float p;
+			for (size_t s=0; s<nseg; s++)
+				{
+				itmp >> p;
+				positions[s] = lround(p * mask[l].size());
+				}
+			}
 
 		// for all population
 		for (size_t p=0; p<n_pops; p++)
 			{
 			sequences[p][l].set_tot_n_sites(n_sites[l]);
+
 			// all sequences of population p
 			for (size_t h=0; h<n_sequences[p][l]; h++) 
 				{	
@@ -96,10 +119,20 @@ void read_dataset(istream & inp, size_t dataset,
 
 				Sequence & seq = sequences[p][l].sequence(h);
 				seq.clear(); seq.reserve(nseg);
-				for (size_t i=0; i<str.size(); i++)
-					seq.push_back(int(str[i]) - int('0'));
-				// we don't do this anymore
-				// seq.resize(n_sites[l], '0');
+				if (mask.size())
+					{
+					for (size_t i=0; i<str.size(); i++)
+						// only add non-masked sites
+						if (mask[l][positions[i]] == 0)
+							seq.push_back(int(str[i]) - int('0'));
+					}
+				else
+					for (size_t i=0; i<str.size(); i++)
+						{
+						if (str[i] != '0' && str[i] != '1')
+							cerr << "unexpected input: " << str[i] << std::endl;
+						seq.push_back(int(str[i]) - int('0'));
+						}
 				}
 			}	/* end loop over haplotypes in population A*/
 			

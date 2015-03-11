@@ -62,6 +62,7 @@ void splitStr(const std::string & str, char sep, ITER & iter)
 			}
 	}
 
+// read next non-blank line
 inline void skip_space(std::istream & inp, std::string & str)
 	{
 	while(getline(inp, str) && boost::all(str, boost::is_space()));

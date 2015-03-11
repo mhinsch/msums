@@ -14,6 +14,7 @@ void MSUMSOptions::do_print_help()
 	cout <<
 	"-i, --init FILE       Use this initialization file. [spinput.txt]\n"
 	"-o, --output FILE     Use this output file. [ABCstat.txt]\n"
+	"-k, --mask FILE       Load (and use) mask file []\n"
 	"-h, --help            Print the help text and exit.\n"
 	"-a, --list_stats      Print list of available stats and exit.\n"
 	"-l, --print_per_locus Print stats per locus, don't print aggregate values.\n"
