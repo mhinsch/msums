@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 
+#include "sputil.h"
 #include "sample.h"
 #include "pairsample.h"
 #include "anafunctors.h"
@@ -113,12 +114,10 @@ public:
 			ana = new PatF3<SAMPLEV>();
 		else if (name == "f4")
 			ana = new PatF4<SAMPLEV>();
+		else if (name == "var")
+			ana = new FreqVarying<SAMPLEV>();
 
-		if (! ana)
-			{
-			// TODO: throw error
-			return;
-			}
+		VERIFY_MSG(ana, string("Error: unknown stat name '" + name + "'"));
 
 		_stats.push_back(ana);
 		_groups.push_back(group);

@@ -28,7 +28,7 @@ void MSUMSOptions::do_print_help()
 	"                      'all' selects all populations, 'allxall' all pairs.\n"
 	"-p, --dropPops LIST   Do *not* show populations/pairs in LIST (see above).\n"
 	"-m, --multiStats LIST Show multi-population statistics in LIST. Use e.g. as:\n"
-	"                      -m fst 1x2x3 3x4x5 -m f4 1x4x5x6\n";
+	"                      -m f4 1x4x5x6 -m var\n";
 	}
 
 void MSUMSOptions::do_list_stats()

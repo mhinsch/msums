@@ -157,6 +157,8 @@ public:
 			arg == "--" + _name)
 			{
 			int i=1;
+
+			_iter.begin();
 			
 			for (; i<argc; i++)
 				{
@@ -164,8 +166,8 @@ public:
 					break;
 
 				_iter(lexical_cast<T>(argv[i]));
-				}
-				
+				}			
+
 			return argv + i;
 			}
 		
@@ -179,33 +181,34 @@ protected:
 	char _flag;
 	};
 
-
+// Argument with n parameters that can re-occur several times in the cmdl.
+// Single occurences are added as a new line to a matrix preceded by an operator 
+// that is set in the Collector object. Enables e.g. '--add a b c --remove x y z' 
+// to be stored in a single data structure.
 class OpList
 	{
 public:
 	struct Collector
 		{
 		vector<vector<string> > & _list;
-		int _current;
 		string _op;
 
-		Collector(OpList & list, const string & op)
-			: _list(list.getList()), _current(-1), _op(op)
+		// empty op strings will not be added to the list
+		Collector(OpList & list, const string & op = "")
+			: _list(list.getList()), _op(op)
 			{}
+
+		void begin()
+			{
+			_list.push_back(vector<string>());
+			if (_op != "")
+				_list.back().push_back(_op);
+			}
 
 		void operator()(const string & str)
 			{
-			cerr << "ol: " << str << endl;
-
-			if (_current < int(_list.size()))
-				{
-				_list.push_back(vector<string>());
-				_list.back().push_back(_op);
-				_current = _list.size();
-				}
-
-			if (_current == int(_list.size()))
-				_list.back().push_back(str);
+			//cerr << "ol: " << str << endl;
+			_list.back().push_back(str);
 			}
 		};
 

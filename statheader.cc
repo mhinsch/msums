@@ -38,7 +38,8 @@ string stat_name(const string & name, const vector<size_t> & group)
 	{
 	ostringstream oss;
 	oss << name << '_';
-	copy(group.begin(), group.end(), ostream_iterator<size_t>(oss, "x"));
+	copy(group.begin(), group.end()-1, ostream_iterator<size_t>(oss, "x"));
+	oss << group.back();
 	return oss.str();
 	}
 

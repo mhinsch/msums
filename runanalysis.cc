@@ -50,8 +50,18 @@ void analyse(ostream & abcstatfile, int dataset,
 		for (size_t stat=0; stat<group_stats.size(); stat++)
 			{
 			group.clear();
-			for (size_t i=0; i<groups[stat].size(); i++)
-				group.push_back(&(sequences[groups[stat][i]][l]));
+			if (groups[stat].size())
+				for (size_t i=0; i<groups[stat].size(); i++)
+					{
+					sequences[ groups[stat][i] ][ l ].prepare_alleles_per_site();
+					group.push_back(&(sequences[ groups[stat][i] ][ l ]));
+					}
+			else // a bit of a hack - specifying no pops implies 'all'
+				for (size_t i=0; i<sequences.size(); i++)
+					{
+					sequences[i][l].prepare_alleles_per_site();
+					group.push_back(&(sequences[i][l]));
+					}
 
 			abcstatfile << '\t' << group_stats[stat]->analyse(group);
 			}
@@ -125,14 +135,24 @@ void analyse_aggr(ostream & abcstatfile, int dataset,
 	for (size_t stat=0; stat<group_stats.size(); stat++)
 		{
 		Aggregate aggregate;
-		const vector<size_t> cur_group = groups[stat];
+		const vector<size_t> & cur_group = groups[stat];
 		const GroupStats & ana = *group_stats[stat];
 
 		for (size_t l=0; l<sequences[0].size(); l++)
 			{
 			group.clear();
-			for (size_t i=0; i<groups[stat].size(); i++)
-				group.push_back(&(sequences[cur_group[i]][l]));
+			if (cur_group.size())
+				for (size_t i=0; i<cur_group.size(); i++)
+					{
+					sequences[cur_group[i]][l].prepare_alleles_per_site();
+					group.push_back(&(sequences[cur_group[i]][l]));
+					}
+			else	// no pops == all of them
+				for (size_t i=0; i<sequences.size(); i++)
+					{
+					sequences[i][l].prepare_alleles_per_site();
+					group.push_back(&(sequences[i][l]));
+					}
 
 			aggregate(ana.analyse(group));
 			}

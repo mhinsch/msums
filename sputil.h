@@ -16,7 +16,16 @@
 
 #define STRFY(s) #s
 #define TOSTR(s) STRFY(s)
+
 #define ERR_LOC __FILE__ ":" TOSTR(__LINE__)
+
+#define VERIFY(expr) verify((expr), ERR_LOC ":\t assertion '" TOSTR(expr) "' failed!")
+#define VERIFY_MSG(expr, msg) verify((expr), ERR_LOC ":\t", msg)
+#ifdef S_DEBUG
+	#define ASSERT(expr) VERIFY(expr)
+#else
+	#define ASSERT(expr) (void(0)) 
+#endif
 
 using boost::lexical_cast;
 
@@ -35,13 +44,20 @@ inline void get_time_short(std::string & smess)
 	smess = lexical_cast<std::string>(time(NULL));
 	}
 
-
 inline void error(const std::string & msg)
 	{
-	std::cerr << "\n" << msg << std::endl;
-	exit(1);
+	throw std::runtime_error(msg);
+	//std::cerr << "\n" << msg << std::endl;
+	//exit(1);
 	}
 
+inline void verify(bool cond, const std::string & msg, const std::string & msg2 = "")
+	{
+	if (!cond)
+		error(msg + msg2);
+	}
+
+// split string into two halves at position pos and cast results to T
 template<typename T>
 void splitStr(const std::string & str, int pos, T & x1, T & x2)
 	{
@@ -49,13 +65,14 @@ void splitStr(const std::string & str, int pos, T & x1, T & x2)
 	x2 = lexical_cast<T>(str.substr(pos+1, str.size()-pos-1));
 	}
 
+// split string at separator sep and feed pieces into iterator iter
 template<typename ITER>
 void splitStr(const std::string & str, char sep, ITER & iter)
 	{
 	typedef typename ITER::container_type::value_type value_type;
 	size_t last = 0;
-	for (size_t i=0; i<str.size(); i++)
-		if (str[i] == sep || i==str.size()-1)
+	for (size_t i=0; i<=str.size(); i++)
+		if (i==str.size() || str[i]==sep)
 			{
 			*iter = lexical_cast<value_type>(str.substr(last, i-last));
 			last = i + 1;

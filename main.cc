@@ -26,7 +26,7 @@ void select_stats(const vector<vector<string> > & sel,
 void select_pops(const vector<vector<string> > & sel,
 	vector<bool> & pops, vector<vector<bool> > & pairs);
 void create_group_stats(
-	const vector<vector<string> > & sel, gs_handler_t & gsh);
+	const vector<vector<string> > & sel, gs_handler_t & gsh, size_t n_pops);
 
 
 
@@ -40,8 +40,7 @@ int main(int argc,char *argv[])
 // **** read config file
 
 	ifstream inp(opt.inputfilename.c_str());
-	if (!inp.good())
-		error("Error in main: cannot open config file " + opt.inputfilename);
+	VERIFY_MSG(inp.good(), "Error: cannot open config file " + opt.inputfilename);
 
 	ConfigFile conf;
 	try {
@@ -57,16 +56,15 @@ int main(int argc,char *argv[])
 	if (opt.maskfilename != "")
 		{
 		ifstream m_inp(opt.maskfilename.c_str());
-		if (!m_inp.good())
-			error("Error in main: cannot open mask file " + opt.maskfilename);
+		VERIFY_MSG(m_inp.good(), "Error: cannot open mask file " + opt.maskfilename);
 
 			try {
 		read_mask(m_inp, mask);
 			} catch (exception & e) {error(e.what());}
 
 		for (size_t m=0; m<mask.size(); m++)
-			if (mask[m].size() != conf.n_sites()[m])
-				error("Error in main: mask does not match config file");
+			VERIFY_MSG(mask[m].size() != conf.n_sites()[m],
+				"Error: mask does not match config file");
 
 		cout << "read masks for " << mask.size() << " loci\n";
 		}
@@ -105,7 +103,7 @@ int main(int argc,char *argv[])
 	const vector<PairStats*> & pair_stats = ps_handler.active();	
 
 	gs_handler_t gs_handler;
-	create_group_stats(opt.groupStatList.getList(), gs_handler);
+	create_group_stats(opt.groupStatList.getList(), gs_handler, conf.n_pops());
 	const vector<gs_handler_t::analysis_t*> & group_stats = gs_handler.stats();
 	const vector<gs_handler_t::group_t> & groups = gs_handler.groups();
 	
@@ -113,8 +111,8 @@ int main(int argc,char *argv[])
 // **** prepare header of output file
 
 	ofstream abcstatfile(opt.statfilename.c_str());
-	if (!abcstatfile.good())
-		error("Error in main: cannot open output file " + opt.statfilename);
+	VERIFY_MSG(abcstatfile.good(), 
+		"Error: cannot open output file " + opt.statfilename);
 
 	try {
 	write_ABCstat_header(abcstatfile, 
@@ -149,9 +147,7 @@ int main(int argc,char *argv[])
 	vector<Sequence> outgroup(conf.n_loci(), Sequence());
 	
 	ifstream input(conf.datafilename().c_str());
-	if (!input.good())
-		error("Error in main: cannot open data file " +
-			conf.datafilename());
+	VERIFY_MSG(input.good(), "Error: cannot open data file " + conf.datafilename());
 
 
 // **** start reading datasets and calculating
@@ -206,11 +202,11 @@ void select_stats(
 			cerr << ", " << sel[s][t];
 			if (sel[s][t] == "all")
 				{
-				for (size_t s=0; s<all.size(); s++)
+				for (size_t u=0; u<all.size(); u++)
 					if (to)
-						use.insert(all[s]);
+						use.insert(all[u]);
 					else
-						use.erase(all[s]);
+						use.erase(all[u]);
 				continue;
 				}
 
@@ -224,14 +220,28 @@ void select_stats(
 	}
 
 void create_group_stats(
-	const vector<vector<string> > & sel, gs_handler_t & gsh)
+	const vector<vector<string> > & sel, gs_handler_t & gsh, size_t n_pops)
 	{
 	vector<size_t> selected;
 	// go through all selection sequences
 	for (size_t s=0; s<sel.size(); s++)
 		{
 		const vector<string> & list = sel[s];
+
+		VERIFY(list.size() > 0);
+
 		const string & stat_name = list[0];
+
+		// empty pop list, stats have to handle that case
+		if (list.size() == 1)
+			{
+			selected.clear();
+			for (size_t i=0; i<n_pops; i++)
+				selected.push_back(i);
+
+			gsh.add(stat_name, selected);
+			return;
+			}
 
 		// go through list of pops
 		for (size_t t=1; t<list.size(); t++)
@@ -245,7 +255,11 @@ void create_group_stats(
 			} catch(exception & e)
 				{error(string("Error in parameter: '") + str + 
 					"' is not a valid group");}
-			
+
+			for (size_t i=0; i<selected.size(); i++)
+				VERIFY_MSG(selected[i]<n_pops, 
+					"Error in parameter: invalid population index");
+
 			gsh.add(stat_name, selected);
 			}
 		}
@@ -253,9 +267,8 @@ void create_group_stats(
 
 void checkPopIndex(size_t i, size_t n)
 	{
-	if (i >= n)
-		error(string("Error in parameter: population index ") + 
-			lexical_cast<string>(i) + " out of range");
+	VERIFY_MSG(i < n, string("Error in parameter: population index ") + 
+		lexical_cast<string>(i) + " out of range");
 	}
 
 void select_pops(const vector<vector<string> > & sel,
@@ -291,7 +304,8 @@ void select_pops(const vector<vector<string> > & sel,
 			size_t c;
 			for (c=0; c<str.size(); c++)
 				{
-				if (str[c] == '-')	// pop range
+				// range
+				if (str[c] == '-')
 					{
 					size_t p1, p2;
 
@@ -312,7 +326,8 @@ void select_pops(const vector<vector<string> > & sel,
 						}
 					break;
 					}
-				if (str[c] == 'x') // pair
+				// pair
+				if (str[c] == 'x') 
 					{
 					int p1, p2;
 
@@ -330,7 +345,8 @@ void select_pops(const vector<vector<string> > & sel,
 					}
 				}
 
-			if (c == str.size()) // no '-' or 'x' found => single pop
+			// no '-' or 'x' found => single pop
+			if (c == str.size()) 				
 				{
 				size_t p;
 				try {

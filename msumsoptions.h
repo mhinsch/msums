@@ -45,7 +45,7 @@ public:
 		printPerLocus(false), printHelp(false), listStats(false),
 		keepS(statList, "+"), dropS(statList, "-"), 
 		keepP(popList, "+"), dropP(popList, "-"),
-		groupSt(groupStatList, ""), 
+		groupSt(groupStatList), 
 		o_ifn(p, 'i', "init", inputfilename), o_sfn(p, 'o', "output", statfilename),
 		o_mfn(p, 'k', "mask", maskfilename),
 		o_ppl(p, 'l', "print_per_locus", printPerLocus),
