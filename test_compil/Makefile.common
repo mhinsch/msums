@@ -1,0 +1,65 @@
+# general rules needed (nearly) all the time
+
+QTDIR = /usr/share/qt4
+CC = gcc
+DC = gdc
+QT_MOC = $(QTDIR)/bin/moc
+QT_INCLUDE = $(QTDIR)/include
+QT_LIB = $(QTDIR)/lib
+PROJDIR = ~/devel/projects
+DISTDIR = $(PROJDIR)/distrib
+ARCH = -march=native # -mfpmath=sse -msse -msse2  # buggy??
+
+  # how to make a lib from objects
+%.a :
+	$(AR) crs $@ $?
+
+  # how to make an object from source
+%.o : %.cc
+	$(CC) $(CFLAGS) $(IFLAGS) $(DGCCVER) -c $< -o $@
+
+%.o : %.cpp
+	$(CC) $(CFLAGS) $(IFLAGS) $(DGCCVER) -c $< -o $@
+
+%.o : %.d
+	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
+
+  # for mocs
+%.moc.o : %.moc
+	$(CC) $(CFLAGS) $(IFLAGS) $(DGCCVER) -x c++ -c $< -o $@
+
+%.moc : %.h
+	$(QT_MOC) $< -o $@
+
+ # the default target
+ # generate the executable from all objects
+ # variables have to be defined individually
+$(TARGET) : $(OBJECTS)
+	$(CC) -o $@ $(LFLAGS) $(DGCCVER) $^ $(LIBS) $(GUI_LIBS)
+	
+new : all_clean
+	$(MAKE) $(TARGET)
+
+depend :
+	$(CC) -MM $(DEP_OPTS) $(DEP_SRC) > Makefile.dep
+
+tags : $(SOURCE)
+	ctags $(SOURCE)
+
+edit :
+	$(EDIT) $(SOURCE) &
+
+distrib : all_clean
+	tar -C .. -czvf $(DIRECTORY).tgz $(DIRECTORY); mv \
+	$(DIRECTORY).tgz $(DISTDIR)/.
+
+undistrib :
+	cd $(PROJDIR); tar -xzvf $(DISTDIR)/$(DIRECTORY).tgz 
+
+version :
+	echo "#define PROGRAM_VERSION " "\""`date +%x-%T`"\"" > version.h
+
+docs : .doc_generated
+
+.doc_generated : $(DOC_SOURCE)
+	doxygen Doxyfile; ( $(DOC_INSTALL) ); touch .doc_generated
