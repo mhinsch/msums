@@ -3,3 +3,5 @@ a.out
 *.o
 *.dep
 *~
+test_compil
+*.zip
