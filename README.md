@@ -3,7 +3,35 @@
 Program for efficient computation of summary statistics from ms outputs including any arbitrary number of populations.
 ___
 
+## Installation
+===
+```bash
+touch Makefile.dep
+make clean
+```
+
+Do not pay attention to the warning like:
+
+```
+`stats_multi.h:365:8: warning: unused parameter ‘stop2’ [-Wunused-parameter]
+ double patterson_f4
+        ^
+stats_multi.h:365:8: warning: unused parameter ‘stop3’ [-Wunused-parameter]
+stats_multi.h:365:8: warning: unused parameter ‘stop4’ [-Wunused-parameter]
+...
+stats_multi.h:343:8: warning: unused parameter ‘stop2’ [-Wunused-parameter]
+ double patterson_f3
+        ^
+stats_multi.h:343:8: warning: unused parameter ‘stop3’ [-Wunused-parameter]
+...
+stats_multi.h:325:8: warning: unused parameter ‘stop2’ [-Wunused-parameter]
+ double patterson_D(
+        ^
+```
+
+
 ## Description of statistics
+===
 ### Manual conventions
 - The suffixes 'avg' and 'std' stand for average and standrad deviation, respectively.
 - Populations are referred by indexes *i* and *j* and can range from 0 to n, where n is the number of sampled populations.
