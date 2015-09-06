@@ -9,7 +9,7 @@ using namespace std;
 void MSUMSOptions::do_print_help()
 	{
 	cout <<
-	"analms [-i FILE] [-o FILE] [-h] [-l] [[-s|-S STATLIST]...] "
+	"msums [-i FILE] [-o FILE] [-h] [-l] [[-s|-S STATLIST]...] "
 	"[[-p|-P POPLIST]...]\n\n";
 	cout <<
 	"-i, --init FILE       Use this initialization file. [spinput.txt]\n"
