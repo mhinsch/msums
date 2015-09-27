@@ -159,7 +159,8 @@ int main(int argc,char *argv[])
 			{error(e.what());}
 
 		// new data set
-		if (dataset > 0)    // the function statheader ends with 'endl', so no need to introduce a newline for the first dataset
+            // the function statheader ends with 'endl', so no need to introduce a newline for the first dataset
+		if (dataset > 0)
             {
 			abcstatfile << "\n";
             }
