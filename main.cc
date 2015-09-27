@@ -159,7 +159,10 @@ int main(int argc,char *argv[])
 			{error(e.what());}
 
 		// new data set
-		abcstatfile << "\n"; 
+		if (dataset > 0)    // the function statheader ends with 'endl', so no need to introduce a newline for the first dataset
+            {
+			abcstatfile << "\n";
+            }
 
 		if (opt.printPerLocus)
 			analyse(abcstatfile, dataset, sequences, show_pops, show_pairs,
