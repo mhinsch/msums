@@ -11,6 +11,14 @@ git clone https://github.com/lduvaux/msums
 
 ## Installation
 ===
+The installation requires the boost and boost-devl libraries. For 
+Manjaro/Archlinux, type:
+
+```bash
+sudo pacman -S boost boost-libs 
+```
+
+
 ```bash
 touch Makefile.dep
 make clean
