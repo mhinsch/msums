@@ -53,7 +53,7 @@ void write_ABCstat_header(ostream & file,
 	const vector<string> & gs_names, const vector<vector<size_t> > & gs_groups,
 	bool write_aggr)
 	{
-	file << "\ndataset";
+	file << "dataset";
 	
 	// works for now, might have to be separate param in the future
 	if (!write_aggr)

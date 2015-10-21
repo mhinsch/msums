@@ -3,3 +3,9 @@ a.out
 *.o
 *.dep
 *~
+test_compil
+*.zip
+msums
+OtherDoc_Not2push/
+*.tar.gz
+msums_sources/
