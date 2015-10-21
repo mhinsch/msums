@@ -40,7 +40,7 @@ stats_multi.h:325:8: warning: unused parameter ‘stop2’ [-Wunused-parameter]
 ===
 ### Conventions
 In the following text:
-- The suffixes 'mean' and 'std' stand for average and standrad deviation, respectively.
+- The suffixes 'mean' and 'std' stand for average and standard deviation, respectively.
 - Populations are referred by indexes *i* and *j* and can range from 0 to n, where n is the number of sampled populations.
   - As an example 'FST_*i*x*j*_mean' refers to the mean Fst across loci between populations *i* and *j*.
 - The coding of ancestral/derived alleles follow the ms convention -> 0: ancestral, 1: derived.
