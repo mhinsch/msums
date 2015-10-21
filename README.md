@@ -21,7 +21,7 @@ sudo pacman -S boost boost-libs
 
 ```bash
 touch Makefile.dep
-make clean
+make
 ```
 
 Do not pay attention to the warning like:
