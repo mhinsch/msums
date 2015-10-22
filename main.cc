@@ -63,7 +63,7 @@ int main(int argc,char *argv[])
 			} catch (exception & e) {error(e.what());}
 
 		for (size_t m=0; m<mask.size(); m++)
-			VERIFY_MSG(mask[m].size() != conf.n_sites()[m],
+			VERIFY_MSG(mask[m].size() == conf.n_sites()[m],
 				"Error: mask does not match config file");
 
 		cout << "read masks for " << mask.size() << " loci\n";
