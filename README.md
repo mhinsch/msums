@@ -3,17 +3,22 @@
 A program for the efficient computation of a number of population genetics summary statistics. msums can read ms-format data 
 on (nearly) arbitrary numbers of populations.
 
-___
+
+## Disclaimer
+
+The code in this project was originally created for internal with only secondary consideration for easy consumption. As such it is poorly documented and at times - due to optimization requirements - awkward and complicated. 
+
+Furthermore, while we made every effort to ensure the code is correct, please use at your own risk. It is probably prudent to have a look at the (not terribly legible, sorry) code first to make sure it does what you think it does.
 
 ## Download
-===
+
 You need to have Git installed, then:
 ```
 git clone https://github.com/mhinsch/msums
 ```
 
 ## Installation
-===
+
 The installation requires the boost and boost-dev libraries. For 
 Manjaro/Archlinux, type:
 
@@ -48,7 +53,7 @@ stats_multi.h:325:8: warning: unused parameter ‘stop2’ [-Wunused-parameter]
 
 
 ## Description of statistics
-===
+
 ### Conventions
 In the following text:
 - The suffixes 'mean' and 'std' stand for average and standard deviation, respectively.
@@ -96,3 +101,9 @@ Those are Patterson's test described in Patterson *et al. Genetics* 2012.
 - __f4__: is this test really implemented? [**Martin can you confirm?**]
 - __pattD_*i*x*j*__: Patterson's D, see *insert paper here*. [How it is implemented, does it not need 4 pops? Is it F2 maybe? Patterson *et al. Genetics* 2012] Is this test really implemented? [**Martin can you confirm?**]
 
+## Contributors
+
+-   [Martin Hinsch](https://github.com/mhinsch)
+-   [Ludovic Duvaux](https://github.com/lduvaux)
+
+Early versions of this program originated as a rewrite of [mscalc](http://www.abcgwh.sitew.ch/Utensils.J.htm#Utensils.J) (back then known under the somewhat unfortunate name AnalMS). Other versions of mscalc [here](https://github.com/popgenomics/popPhylABC/tree/master/mscalc) and [here](https://github.com/ThibaultLeroyFr/RedOakABC/tree/master/mscalc).
