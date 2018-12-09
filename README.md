@@ -6,7 +6,7 @@ on (nearly) arbitrary numbers of populations.
 
 ## Disclaimer
 
-The code in this project was originally created for internal with only secondary consideration for easy consumption. As such it is poorly documented and at times - due to optimization requirements - awkward and complicated. 
+The code in this project was originally created for internal use with only secondary consideration for easy consumption. As such it is poorly documented and at times - due to optimization requirements - awkward and complicated. 
 
 Furthermore, while we made every effort to ensure the code is correct, please use at your own risk. It is probably prudent to have a look at the (not terribly legible, sorry) code first to make sure it does what you think it does.
 
