@@ -1,7 +1,10 @@
 # msums
 
-Program for efficient computation of summary statistics from ms outputs including any arbitrary number of populations.
+A program for the efficient computation of a number of population genetics summary statistics. msums can read ms-format data 
+on (nearly) arbitrary numbers of populations.
+
 ___
+
 ## Download
 ===
 You need to have Git installed, then:
