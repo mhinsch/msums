@@ -6,12 +6,12 @@ ___
 ===
 You need to have Git installed, then:
 ```
-git clone https://github.com/lduvaux/msums
+git clone https://github.com/mhinsch/msums
 ```
 
 ## Installation
 ===
-The installation requires the boost and boost-devl libraries. For 
+The installation requires the boost and boost-dev libraries. For 
 Manjaro/Archlinux, type:
 
 ```bash
@@ -24,7 +24,7 @@ touch Makefile.dep
 make
 ```
 
-Do not pay attention to the warning like:
+Do not pay attention to warnings like:
 
 ```
 `stats_multi.h:365:8: warning: unused parameter ‘stop2’ [-Wunused-parameter]
@@ -57,15 +57,15 @@ In the following text:
 
 ### Statistics of genetic diversity
 #### Within population statistics
-- __pairdif__: sum of pairwise difference? [**to be checked - Martin can you confirm?**]
+- __pairdif__: sum of pairwise allele differences
 - __segr__: number of segregating sites(i.e. SNPs) per locus
-- __singlet__: number of singletons sites(?) per locus [**to be checked - Martin can you confirm?**]
+- __singlet__: overall number of singleton alleles (across all sites)
 - __thpi__: Tajima's *Theta*, i.e. nucleotide diversity
 - __thW__: Watterson *Theta*.
 - __flDstar__: Fu & Li’s _D*_
 - __flFstar__: Fu & Li’s _F*_
-- __tD__: Tajima's *D* [(pi-theta)/variance] ? [**to be checked - Martin can you confirm?**]
-- __R2__: Ramos-Onsins *R2* test (Ramos-Onsins & Rozas, *Mol.Biol.Evol.* 2002). [**to be checked - Martin can you confirm? Notably, I guess it's not the r2 estimates of linkage disequilibrium, right?**]
+- __tD__: Tajima's *D* [(pi-theta)/variance] 
+- __R2__: Ramos-Onsins *R2* test (Ramos-Onsins & Rozas, *Mol.Biol.Evol.* 2002)
 
 #### Between population statistics
 - __d_*i*x*j*__: Raw nucleotidic divergence between species *i* and *j* (Nei's *Dxy*, eq.12.66, Nei and Kumar 2000).
@@ -81,10 +81,10 @@ In the following text:
 - __sxAfB_*i*x*j*__: number of sites polymorphic in species A and fixed for the derived allele in species B (0101/1111), where A=*i* and B=*j*.
 - __sxBfA_*i*x*j*__: number of sites fixed for the derived allele in species A and polymorphic in species B (1111/0010), where A=*i* and B=*j*.
 - __ss_*i*x*j*__	: number of sites with shared derived alleles between pop*i* and pop*j* (1010/1110). Mean over populations.  [**to be checked - this stat should be symetrical between pops, so that the mean equal the value in each pop actually unless we divide by the total number of pops (that might be different from 2 but that would be surprising.**]
-- __Rf_*i*x*j*__: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailled**]
-- __Rs_*i*x*j*__: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailled**]
-- __Wx2s1_*i*x*j*__	: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailled**]
-- __Wx1s2_*i*x*j*__	: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailled**]
+- __Rf_*i*x*j*__: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailed**]
+- __Rs_*i*x*j*__: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailed**]
+- __Wx2s1_*i*x*j*__	: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailed**]
+- __Wx1s2_*i*x*j*__	: see Navascues *et al. BMC Evol. Biol* 2014. [**to be detailed**]
 - __pattD_*i*x*j*__: Patterson's *D* statistic used in the "ABBA-BABA" test (Patterson *et al. Genetics* 2012). [How it is implemented, does it not need 4 pops? Is it F2 maybe? See Patterson *et al. Genetics* 2012]
 
 #### Multi-population statistics (more than two populations)
